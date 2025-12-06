@@ -81,21 +81,6 @@ export default function Dashboard() {
         />
       </div>
 
-      <Card className="border border-slate-200 shadow-none rounded-sm">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-slate-900" style={{ fontFamily: 'Manrope, sans-serif' }}>Resumen Financiero</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-slate-600" style={{ fontFamily: 'Inter, sans-serif' }}>Costo Total en Servicios (Mensual):</span>
-              <span className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Manrope, sans-serif' }}>
-                ${stats?.costo_total_servicios?.toFixed(2) || '0.00'}
-              </span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
