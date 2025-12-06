@@ -76,7 +76,8 @@ export default function Bitacoras() {
       resetForm();
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Error al guardar bitácora');
+      const errorMsg = error.response?.data?.detail || 'Error al guardar bitácora';
+      toast.error(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
     }
   };
 
