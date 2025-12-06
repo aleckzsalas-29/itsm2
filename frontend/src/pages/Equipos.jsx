@@ -101,15 +101,7 @@ export default function Equipos() {
     e.preventDefault();
     try {
       const submitData = { ...formData };
-      if (submitData.fecha_compra) {
-        submitData.fecha_compra = new Date(submitData.fecha_compra).toISOString();
-      }
-      if (submitData.garantia_hasta) {
-        submitData.garantia_hasta = new Date(submitData.garantia_hasta).toISOString();
-      }
-      if (submitData.costo) {
-        submitData.costo = parseFloat(submitData.costo);
-      }
+      submitData.empresa_id = selectedEmpresa;
 
       if (editingEquipo) {
         await api.put(`/equipos/${editingEquipo._id}`, submitData);
