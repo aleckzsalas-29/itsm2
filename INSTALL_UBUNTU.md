@@ -485,6 +485,118 @@ Contraseña: admin123
 
 ---
 
+## 🆕 FUNCIONALIDADES DEL SISTEMA
+
+### Módulos Principales
+
+El Sistema ITSM incluye los siguientes módulos completos:
+
+1. **📊 Dashboard**
+   - Estadísticas generales del sistema
+   - Resumen de equipos activos, bitácoras pendientes, y servicios
+   - Visualización de costos mensuales de servicios
+
+2. **🏢 Empresas**
+   - Gestión completa de empresas/clientes
+   - Información de contacto y detalles
+   - Campos personalizables
+
+3. **💻 Equipos**
+   - Registro detallado de equipos (Laptops, Desktops, Servidores)
+   - Especificaciones técnicas (RAM, CPU, Disco Duro)
+   - Credenciales de Windows y Email (encriptadas)
+   - Asignación a empresas
+   - **Campos personalizados** dinámicos
+
+4. **📝 Bitácoras de Mantenimiento**
+   - Registro de mantenimientos preventivos y correctivos
+   - Checklists de tareas realizadas
+   - Asignación de técnicos
+   - Filtrado por empresa y equipo
+   - Exportación a CSV
+   - **Campos personalizados** dinámicos
+
+5. **🔧 Servicios Contratados**
+   - Gestión de hosting, licencias, VPS
+   - Fechas de contratación y renovación
+   - Costos mensuales
+   - Credenciales encriptadas
+   - **Campos personalizados** dinámicos
+
+6. **📄 Reportes**
+   - Generación de reportes en PDF
+   - Reportes por empresa (equipos, bitácoras, servicios)
+   - Reportes por equipo individual
+   - Logo personalizable en reportes
+
+7. **👥 Gestión de Usuarios**
+   - Roles: Administrador, Cliente, Técnico
+   - Control de acceso basado en roles
+   - Gestión de credenciales
+
+8. **⚙️ Configuración del Sistema**
+   - Cambio de nombre del sistema
+   - Subida de logo corporativo
+   - **🆕 Campos Personalizados:** Permite a los administradores agregar campos dinámicos a cualquier entidad
+
+### 🆕 Campos Personalizados (Nueva Funcionalidad)
+
+El sistema ahora incluye una funcionalidad avanzada para personalizar campos en todas las entidades:
+
+**¿Qué son los Campos Personalizados?**
+- Permiten agregar campos adicionales específicos a las necesidades de tu organización
+- Configurables desde la interfaz de administración
+- Soportan múltiples tipos de datos
+
+**Tipos de Campos Soportados:**
+- ✅ **Texto:** Para información alfanumérica (ej: "Número de Activo", "Ubicación Específica")
+- ✅ **Número:** Para valores numéricos (ej: "Horas de Uso", "Costo de Reparación")
+- ✅ **Fecha:** Para fechas importantes (ej: "Garantía Hasta", "Última Inspección")
+- ✅ **Selección (Select):** Para opciones predefinidas (ej: "Departamento", "Estado de Garantía")
+- ✅ **Checkbox:** Para valores booleanos (ej: "Incluye Mouse", "Tiene Antivirus")
+
+**Dónde se pueden usar:**
+- Equipos
+- Bitácoras
+- Empresas
+- Servicios
+
+**Cómo configurar:**
+1. Iniciar sesión como Administrador
+2. Ir a **Configuración** → **Configurar Campos**
+3. Seleccionar la entidad (Equipos, Bitácoras, etc.)
+4. Click en **Agregar Campo**
+5. Completar:
+   - Nombre del campo
+   - Tipo (Texto, Número, Fecha, Select, Checkbox)
+   - Si es requerido o no
+   - Opciones (solo para tipo Select)
+6. Guardar
+
+**Los campos personalizados aparecerán automáticamente** en los formularios de creación/edición de la entidad seleccionada.
+
+**Ejemplo práctico:**
+Para Equipos, puedes agregar:
+- "Número de Activo" (Texto)
+- "Fecha de Compra" (Fecha)
+- "Departamento" (Select: IT, Ventas, Administración)
+- "Garantía Vigente" (Checkbox)
+
+### Características de Seguridad
+
+- 🔐 **Autenticación JWT:** Tokens seguros para autenticación
+- 🔒 **Encriptación de Contraseñas:** Contraseñas de usuarios, Windows y correos encriptadas
+- 🛡️ **Control de Acceso:** Permisos basados en roles
+- 📧 **Notificaciones por Email:** Alertas automáticas vía SendGrid (opcional)
+
+### Reportes y Exportación
+
+- **PDF:** Reportes profesionales con logo personalizado
+- **CSV:** Exportación de bitácoras para análisis
+- **Filtros:** Por empresa, fecha, técnico, estado
+
+---
+
 ## 🔧 COMANDOS ÚTILES
 
 ### Ver Estado de Servicios
