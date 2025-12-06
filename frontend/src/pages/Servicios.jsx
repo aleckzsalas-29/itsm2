@@ -86,7 +86,8 @@ export default function Servicios() {
       resetForm();
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Error al guardar servicio');
+      const errorMsg = error.response?.data?.detail || 'Error al guardar servicio';
+      toast.error(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
     }
   };
 
