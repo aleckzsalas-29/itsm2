@@ -344,18 +344,32 @@ curl http://localhost:8000/api/
 # http://tu-ip:3000
 ```
 
-### Paso 8: Configurar Nginx (Opcional pero Recomendado)
+### Paso 14: Configurar Nginx (Recomendado para Producción)
+
+**14.1 - Instalar Nginx:**
+
 ```bash
 sudo apt install nginx -y
+```
+
+**14.2 - Crear configuración del sitio:**
+
+```bash
 sudo nano /etc/nginx/sites-available/itsm
 ```
+
+**Copiar y pegar (modificar `tu-dominio.com`):**
 
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name tu-dominio.com www.tu-dominio.com;
 
-    # Frontend
+    # Logs
+    access_log /var/log/nginx/itsm-access.log;
+    error_log /var/log/nginx/itsm-error.log;
+
+    # Frontend React
     location / {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -363,6 +377,8 @@ server {
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
     # Backend API
@@ -373,29 +389,73 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # CORS headers (si es necesario)
+        add_header Access-Control-Allow-Origin *;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS";
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type";
     }
+
+    # Aumentar tamaño máximo de archivo para subir logos
+    client_max_body_size 10M;
 }
 ```
 
+**Guardar:** `Ctrl + O`, `Enter`, `Ctrl + X`
+
+**14.3 - Activar sitio:**
+
 ```bash
-# Habilitar sitio
+# Crear enlace simbólico
 sudo ln -s /etc/nginx/sites-available/itsm /etc/nginx/sites-enabled/
+
+# Eliminar sitio por defecto (opcional)
+sudo rm /etc/nginx/sites-enabled/default
+
+# Probar configuración
 sudo nginx -t
-sudo systemctl reload nginx
+
+# Reiniciar Nginx
+sudo systemctl restart nginx
 ```
 
-### Paso 9: Configurar SSL con Let's Encrypt (Producción)
+### Paso 15: Configurar SSL con Let's Encrypt (HTTPS)
+
+**Solo si tienes un dominio apuntando al servidor:**
+
 ```bash
+# Instalar Certbot
 sudo apt install certbot python3-certbot-nginx -y
-sudo certbot --nginx -d your-domain.com
+
+# Obtener certificado SSL (cambiar tu-dominio.com)
+sudo certbot --nginx -d tu-dominio.com -d www.tu-dominio.com
+
+# El certificado se renovará automáticamente
 ```
 
-### Paso 10: Configurar Firewall
+**Actualizar .env del frontend para usar HTTPS:**
+
 ```bash
-sudo ufw allow 22/tcp
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
+sudo nano /opt/itsm/frontend/.env
+```
+
+Cambiar a: `REACT_APP_BACKEND_URL=https://tu-dominio.com`
+
+```bash
+# Reiniciar frontend
+sudo systemctl restart itsm-frontend
+```
+
+### Paso 16: Configurar Firewall
+
+```bash
+# Habilitar firewall y permitir servicios necesarios
+sudo ufw allow OpenSSH
+sudo ufw allow 'Nginx Full'
 sudo ufw enable
+
+# Verificar reglas
+sudo ufw status
 ```
 
 ## Acceso Inicial
