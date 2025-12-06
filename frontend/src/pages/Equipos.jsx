@@ -131,7 +131,7 @@ export default function Equipos() {
       try {
         await api.delete(`/equipos/${id}`);
         toast.success('Equipo eliminado exitosamente');
-        fetchData();
+        fetchEquipos();
       } catch (error) {
         toast.error('Error al eliminar equipo');
       }
