@@ -458,18 +458,45 @@ sudo ufw enable
 sudo ufw status
 ```
 
-## Acceso Inicial
+---
 
-Una vez instalado, accede al sistema:
-- **URL:** http://your-domain.com (o http://server-ip)
-- **Usuario:** admin@itsm.com
-- **Contraseña:** admin123
+## 🎉 ¡INSTALACIÓN COMPLETADA!
 
-**¡IMPORTANTE!** Cambia la contraseña del administrador inmediatamente después del primer inicio de sesión.
+### Acceder al Sistema
 
-## Mantenimiento
+**Con Nginx (puerto 80/443):**
+- URL: `http://tu-dominio.com` o `https://tu-dominio.com`
+- O: `http://tu-ip-servidor`
 
-### Ver Logs
+**Sin Nginx (puertos directos):**
+- Frontend: `http://tu-ip:3000`
+- Backend: `http://tu-ip:8000/api/`
+
+### Credenciales por Defecto
+
+```
+Usuario: admin@itsm.com
+Contraseña: admin123
+```
+
+**⚠️ IMPORTANTE:** Cambia la contraseña inmediatamente después del primer inicio de sesión en **Usuarios** → **Editar Admin**.
+
+---
+
+## 🔧 COMANDOS ÚTILES
+
+### Ver Estado de Servicios
+
+```bash
+# Ver todos los servicios
+sudo systemctl status itsm-backend
+sudo systemctl status itsm-frontend
+sudo systemctl status mongod
+sudo systemctl status nginx
+```
+
+### Ver Logs en Tiempo Real
+
 ```bash
 # Backend
 sudo journalctl -u itsm-backend -f
@@ -479,23 +506,111 @@ sudo journalctl -u itsm-frontend -f
 
 # MongoDB
 sudo journalctl -u mongod -f
+
+# Nginx
+sudo tail -f /var/log/nginx/itsm-access.log
+sudo tail -f /var/log/nginx/itsm-error.log
+
+# O ver archivos de log directos
+sudo tail -f /var/log/itsm-backend.log
+sudo tail -f /var/log/itsm-backend.error.log
+sudo tail -f /var/log/itsm-frontend.log
 ```
 
 ### Reiniciar Servicios
+
 ```bash
+# Reiniciar backend
 sudo systemctl restart itsm-backend
+
+# Reiniciar frontend
 sudo systemctl restart itsm-frontend
+
+# Reiniciar MongoDB
 sudo systemctl restart mongod
+
+# Reiniciar Nginx
+sudo systemctl restart nginx
+
+# Reiniciar todo
+sudo systemctl restart itsm-backend itsm-frontend mongod nginx
 ```
 
-### Backup de Base de Datos
+### Detener Servicios
+
 ```bash
-mongodump --db itsm_db --out /backup/itsm_$(date +%Y%m%d)
+sudo systemctl stop itsm-backend
+sudo systemctl stop itsm-frontend
+```
+
+---
+
+## 💾 BACKUP Y RESTAURACIÓN
+
+### Crear Backup de Base de Datos
+
+```bash
+# Crear directorio de backups
+sudo mkdir -p /backup/itsm
+
+# Backup completo
+sudo mongodump --db itsm_db --out /backup/itsm/backup_$(date +%Y%m%d_%H%M%S)
+
+# Listar backups
+ls -lh /backup/itsm/
 ```
 
 ### Restaurar Base de Datos
+
 ```bash
-mongorestore --db itsm_db /backup/itsm_20240115/itsm_db
+# Restaurar desde un backup específico
+sudo mongorestore --db itsm_db /backup/itsm/backup_20241206_120000/itsm_db
+
+# Restaurar con drop (reemplaza completamente la BD)
+sudo mongorestore --db itsm_db --drop /backup/itsm/backup_20241206_120000/itsm_db
+```
+
+### Backup Automático (Opcional)
+
+Crear script de backup automático:
+
+```bash
+sudo nano /usr/local/bin/backup-itsm.sh
+```
+
+Contenido:
+
+```bash
+#!/bin/bash
+BACKUP_DIR="/backup/itsm"
+DATE=$(date +%Y%m%d_%H%M%S)
+RETENTION_DAYS=30
+
+# Crear backup
+mongodump --db itsm_db --out ${BACKUP_DIR}/backup_${DATE}
+
+# Comprimir backup
+tar -czf ${BACKUP_DIR}/backup_${DATE}.tar.gz -C ${BACKUP_DIR} backup_${DATE}
+rm -rf ${BACKUP_DIR}/backup_${DATE}
+
+# Eliminar backups antiguos
+find ${BACKUP_DIR} -name "backup_*.tar.gz" -mtime +${RETENTION_DAYS} -delete
+
+echo "Backup completado: backup_${DATE}.tar.gz"
+```
+
+Hacer ejecutable y agregar a cron:
+
+```bash
+sudo chmod +x /usr/local/bin/backup-itsm.sh
+
+# Agregar a crontab para ejecutar diario a las 2 AM
+sudo crontab -e
+```
+
+Agregar línea:
+```
+0 2 * * * /usr/local/bin/backup-itsm.sh >> /var/log/itsm-backup.log 2>&1
 ```
 
 ## Resolución de Problemas
