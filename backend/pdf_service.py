@@ -206,8 +206,9 @@ class PDFService:
         
         return filename
     
-    def generate_equipo_report(self, equipo: Dict, bitacoras: List[Dict]) -> str:
-        pdf = ITSMReportPDF(f"Reporte de Equipo - {equipo.get('nombre', '')}")
+    def generate_equipo_report(self, equipo: Dict, bitacoras: List[Dict],
+                                logo_path: str = None, sistema_nombre: str = "Sistema ITSM") -> str:
+        pdf = ITSMReportPDF(f"Reporte de Equipo - {equipo.get('nombre', '')}", logo_path, sistema_nombre)
         pdf.add_page()
         
         pdf.set_font("helvetica", "B", 12)
