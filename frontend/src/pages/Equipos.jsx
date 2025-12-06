@@ -120,7 +120,7 @@ export default function Equipos() {
       }
       setDialogOpen(false);
       resetForm();
-      fetchData();
+      fetchEquipos();
     } catch (error) {
       toast.error(getErrorMessage(error, 'Error al guardar equipo'));
     }
