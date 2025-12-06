@@ -623,6 +623,22 @@ async def update_configuracion(request: ConfiguracionUpdate, current_user: Dict 
     
     return {"message": "Configuración actualizada"}
 
+@api_router.post("/configuracion/logo")
+async def upload_logo(file: bytes = Body(...), current_user: Dict = Depends(get_admin_user)):
+    from fastapi import UploadFile, File
+    import base64
+    
+    # Guardar como base64 en la configuración
+    logo_base64 = base64.b64encode(file).decode('utf-8')
+    
+    await db.configuracion.update_one(
+        {},
+        {"$set": {"logo_url": f"data:image/png;base64,{logo_base64}", "actualizado_en": datetime.utcnow()}},
+        upsert=True
+    )
+    
+    return {"message": "Logo actualizado exitosamente", "logo_url": f"data:image/png;base64,{logo_base64}"}
+
 @api_router.get("/estadisticas")
 async def get_estadisticas(current_user: Dict = Depends(get_current_user)):
     total_empresas = await db.empresas.count_documents({})
