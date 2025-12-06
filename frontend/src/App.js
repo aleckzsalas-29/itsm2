@@ -1,53 +1,113 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import Layout from "./components/Layout";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import { Toaster } from "./components/ui/sonner";
+import "./App.css";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-slate-600">Cargando...</div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
+  return <Layout>{children}</Layout>;
 };
+
+const PlaceholderPage = ({ title }) => (
+  <div className="space-y-4">
+    <h1 className="text-4xl font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>{title}</h1>
+    <p className="text-slate-600" style={{ fontFamily: 'Inter, sans-serif' }}>Esta página está en construcción. Pronto estará disponible.</p>
+  </div>
+);
 
 function App() {
   return (
-    <div className="App">
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/empresas"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage title="Empresas" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/equipos"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage title="Equipos" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bitacoras"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage title="Bitácoras" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/servicios"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage title="Servicios" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/reportes"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage title="Reportes" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/usuarios"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage title="Usuarios" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/configuracion"
+            element={
+              <ProtectedRoute>
+                <PlaceholderPage title="Configuración" />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
-    </div>
+      <Toaster />
+    </AuthProvider>
   );
 }
 
