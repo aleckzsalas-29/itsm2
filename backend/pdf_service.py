@@ -177,9 +177,14 @@ class PDFService:
         self.output_dir = "/app/backend/pdfs"
         os.makedirs(self.output_dir, exist_ok=True)
     
+    async def get_config(self, db):
+        config = await db.configuracion.find_one({})
+        return config
+    
     def generate_empresa_report(self, empresa: Dict, equipos: List[Dict], 
-                                  bitacoras: List[Dict], servicios: List[Dict]) -> str:
-        pdf = ITSMReportPDF(f"Reporte de Empresa - {empresa.get('nombre', '')}")
+                                  bitacoras: List[Dict], servicios: List[Dict],
+                                  logo_path: str = None, sistema_nombre: str = "Sistema ITSM") -> str:
+        pdf = ITSMReportPDF(f"Reporte de Empresa - {empresa.get('nombre', '')}", logo_path, sistema_nombre)
         pdf.add_page()
         
         pdf.add_empresa_section(empresa)
