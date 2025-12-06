@@ -493,7 +493,23 @@ async def generate_empresa_report(empresa_id: str, background_tasks: BackgroundT
         servicios.append(servicio)
     
     try:
-        filename = pdf_service.generate_empresa_report(empresa, equipos, bitacoras, servicios)
+        # Obtener configuración para logo y nombre
+        config = await db.configuracion.find_one({})
+        logo_path = None
+        sistema_nombre = "Sistema ITSM"
+        
+        if config:
+            sistema_nombre = config.get("nombre_sistema", "Sistema ITSM")
+            # Si hay logo en base64, guardarlo temporalmente
+            if config.get("logo_url") and config["logo_url"].startswith("data:image"):
+                import base64
+                logo_data = config["logo_url"].split(",")[1]
+                logo_bytes = base64.b64decode(logo_data)
+                logo_path = "/tmp/logo_temp.png"
+                with open(logo_path, "wb") as f:
+                    f.write(logo_bytes)
+        
+        filename = pdf_service.generate_empresa_report(empresa, equipos, bitacoras, servicios, logo_path, sistema_nombre)
         
         background_tasks.add_task(
             email_service.send_report_notification,
