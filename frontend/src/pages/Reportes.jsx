@@ -48,8 +48,7 @@ export default function Reportes() {
       const downloadUrl = `${process.env.REACT_APP_BACKEND_URL}${response.data.filename.replace('empresa_', '/api/reportes/download/empresa_')}`;
       window.open(downloadUrl, '_blank');
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || 'Error al generar reporte';
-      toast.error(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
+      toast.error(getErrorMessage(error, 'Error al generar reporte'));
     } finally {
       setLoading(false);
     }
@@ -69,8 +68,7 @@ export default function Reportes() {
       const downloadUrl = `${process.env.REACT_APP_BACKEND_URL}${response.data.filename.replace('equipo_', '/api/reportes/download/equipo_')}`;
       window.open(downloadUrl, '_blank');
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || 'Error al generar reporte';
-      toast.error(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
+      toast.error(getErrorMessage(error, 'Error al generar reporte'));
     } finally {
       setLoading(false);
     }
