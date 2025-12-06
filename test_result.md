@@ -101,3 +101,101 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Testing de Funcionalidad: Campos Personalizados - Se implementó una funcionalidad de campos personalizados dinámicos para el sistema ITSM. Los usuarios administradores pueden configurar campos adicionales para cada entidad (Equipos, Bitácoras, Empresas, Servicios)."
+
+backend:
+  - task: "Authentication System"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Authentication working correctly with admin@itsm.com credentials. JWT token generation and validation successful."
+
+  - task: "Custom Fields Configuration API"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "All configuration endpoints working: GET/PUT /api/configuracion/campos/{entity_type} for equipos, bitacoras, empresas, servicios. Proper validation for field types and required properties."
+
+  - task: "Custom Fields Validation"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Validation working correctly: rejects invalid field types, missing field names, select fields without options, and invalid entity types."
+
+  - task: "Equipment CRUD with Custom Fields"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Initial test failed due to PyObjectId Pydantic v2 compatibility issue: 'PyObjectId.validate() takes 2 positional arguments but 3 were given'"
+        - working: true
+          agent: "testing"
+          comment: "Fixed PyObjectId validator to accept validation_info parameter for Pydantic v2 compatibility. Equipment creation, retrieval, update with custom fields now working perfectly."
+
+  - task: "Custom Fields Data Persistence"
+    implemented: true
+    working: true
+    file: "models.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Custom fields persist correctly in MongoDB. Verified through create, read, update operations. Fields maintain data integrity across operations."
+
+frontend:
+  - task: "Custom Fields UI (Not Tested)"
+    implemented: true
+    working: "NA"
+    file: "N/A"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Frontend testing not performed as per testing agent limitations. Backend APIs are fully functional for frontend integration."
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Custom Fields Configuration API"
+    - "Equipment CRUD with Custom Fields"
+    - "Custom Fields Validation"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "testing"
+      message: "Completed comprehensive backend testing of custom fields functionality. Fixed critical PyObjectId compatibility issue. All 17 backend tests passing with 100% success rate. Custom fields working for equipos entity with proper validation, persistence, and CRUD operations."
