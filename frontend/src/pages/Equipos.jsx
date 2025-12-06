@@ -100,7 +100,8 @@ export default function Equipos() {
       resetForm();
       fetchData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Error al guardar equipo');
+      const errorMsg = error.response?.data?.detail || 'Error al guardar equipo';
+      toast.error(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
     }
   };
 
