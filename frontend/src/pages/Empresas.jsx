@@ -52,8 +52,7 @@ export default function Empresas() {
       resetForm();
       fetchEmpresas();
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || 'Error al guardar empresa';
-      toast.error(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
+      toast.error(getErrorMessage(error, 'Error al guardar empresa'));
     }
   };
 
