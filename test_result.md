@@ -238,3 +238,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
       message: "Completed comprehensive backend testing of custom fields functionality. Fixed critical PyObjectId compatibility issue. All 17 backend tests passing with 100% success rate. Custom fields working for equipos entity with proper validation, persistence, and CRUD operations."
+    - agent: "testing"
+      message: "✅ FRONTEND TESTING COMPLETED SUCCESSFULLY: Comprehensive testing of Custom Fields functionality completed. All major flows working: 1) Navigation from Configuration page ✅ 2) Custom Fields page with entity selector ✅ 3) CRUD operations (Add/Edit/Delete fields) ✅ 4) Integration with Equipment forms ✅ 5) Dynamic field rendering ✅ 6) Entity switching between Equipos/Bitácoras/Empresas/Servicios ✅. Minor UI issue: Some buttons require force clicks due to overlay interception, but functionality is intact. Found existing fields: Número de Activo, Fecha de Compra, Departamento. Field types working: Texto, Fecha, Selección (Select). Custom fields appear correctly in Equipment creation form and can be filled/saved."
