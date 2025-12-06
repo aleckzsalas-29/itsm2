@@ -11,6 +11,7 @@ import Servicios from "./pages/Servicios";
 import Reportes from "./pages/Reportes";
 import Usuarios from "./pages/Usuarios";
 import Configuracion from "./pages/Configuracion";
+import CamposPersonalizados from "./pages/CamposPersonalizados";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
