@@ -10,6 +10,7 @@ import Bitacoras from "./pages/Bitacoras";
 import Servicios from "./pages/Servicios";
 import Reportes from "./pages/Reportes";
 import Usuarios from "./pages/Usuarios";
+import Configuracion from "./pages/Configuracion";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
