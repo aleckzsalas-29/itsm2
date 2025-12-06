@@ -153,9 +153,11 @@ export default function Equipos() {
       password_correo: '',
       ubicacion: equipo.ubicacion,
       estado: equipo.estado,
-      fecha_compra: equipo.fecha_compra ? equipo.fecha_compra.split('T')[0] : '',
-      garantia_hasta: equipo.garantia_hasta ? equipo.garantia_hasta.split('T')[0] : '',
-      costo: equipo.costo || '',
+      memoria_ram: equipo.memoria_ram || '',
+      disco_duro: equipo.disco_duro || '',
+      espacio_disponible: equipo.espacio_disponible || '',
+      procesador: equipo.procesador || '',
+      componentes: equipo.componentes || '',
       notas: equipo.notas || '',
     });
     setDialogOpen(true);
@@ -163,7 +165,7 @@ export default function Equipos() {
 
   const resetForm = () => {
     setFormData({
-      empresa_id: '',
+      empresa_id: selectedEmpresa,
       nombre: '',
       tipo: '',
       marca: '',
@@ -175,9 +177,11 @@ export default function Equipos() {
       password_correo: '',
       ubicacion: '',
       estado: 'Activo',
-      fecha_compra: '',
-      garantia_hasta: '',
-      costo: '',
+      memoria_ram: '',
+      disco_duro: '',
+      espacio_disponible: '',
+      procesador: '',
+      componentes: '',
       notas: '',
     });
     setEditingEquipo(null);
