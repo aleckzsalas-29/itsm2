@@ -96,7 +96,7 @@ function App() {
             path="/usuarios"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Usuarios" />
+                <Usuarios />
               </ProtectedRoute>
             }
           />
