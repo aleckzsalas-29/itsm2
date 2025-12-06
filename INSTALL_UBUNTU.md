@@ -175,23 +175,75 @@ Copiar el resultado y pegarlo en `JWT_SECRET=` en el archivo .env
 
 **Guardar archivo:** `Ctrl + O`, `Enter`, `Ctrl + X`
 
-### Paso 5: Configurar Frontend
+### Paso 8: Configurar el Frontend
+
 ```bash
 cd /opt/itsm/frontend
 
-# Instalar dependencias
-npm install
+# Instalar Yarn (recomendado) o usar npm
+sudo npm install -g yarn
 
-# Configurar variables de entorno
+# Instalar dependencias
+yarn install
+# O si usas npm:
+# npm install
+```
+
+### Paso 9: Crear Archivo .env del Frontend
+
+```bash
+cd /opt/itsm/frontend
+
+# Crear archivo .env
 sudo nano .env
 ```
 
-**Contenido del archivo .env del frontend:**
+**Copiar y pegar (modificar según tu configuración):**
+
 ```env
-REACT_APP_BACKEND_URL=http://your-domain.com:8000
-# o para producción con dominio:
-# REACT_APP_BACKEND_URL=https://api.your-domain.com
+# Para desarrollo local
+REACT_APP_BACKEND_URL=http://localhost:8000
+
+# Para producción con dominio
+# REACT_APP_BACKEND_URL=https://tu-dominio.com
+
+# Para producción con subdominio API
+# REACT_APP_BACKEND_URL=https://api.tu-dominio.com
+
+REACT_APP_ENABLE_VISUAL_EDITS=false
+ENABLE_HEALTH_CHECK=false
 ```
+
+**Importante:** El backend SIEMPRE debe tener `/api` en las rutas, el CORS se configurará automáticamente.
+
+**Guardar archivo:** `Ctrl + O`, `Enter`, `Ctrl + X`
+
+### Paso 10: Probar la Instalación Manualmente (Opcional)
+
+**Probar Backend:**
+
+```bash
+cd /opt/itsm/backend
+source venv/bin/activate
+uvicorn server:app --host 0.0.0.0 --port 8000
+```
+
+Abrir en navegador: `http://tu-ip:8000/api/`
+Deberías ver: `{"message":"Sistema ITSM API"}`
+
+Presionar `Ctrl + C` para detener.
+
+**Probar Frontend:**
+
+```bash
+cd /opt/itsm/frontend
+yarn start
+# O: npm start
+```
+
+Abrir en navegador: `http://tu-ip:3000`
+
+Presionar `Ctrl + C` para detener.
 
 ### Paso 6: Crear Servicios Systemd
 
