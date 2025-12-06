@@ -67,7 +67,7 @@ export default function Layout({ children }) {
         <div className="flex flex-col flex-grow border-r border-slate-200 bg-white overflow-y-auto">
           <div className="flex items-center flex-shrink-0 px-6 py-6 border-b border-slate-200">
             <h1 className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Manrope, sans-serif' }}>
-              Sistema ITSM
+              {sistemaNombre}
             </h1>
           </div>
           <div className="flex-1 flex flex-col">
