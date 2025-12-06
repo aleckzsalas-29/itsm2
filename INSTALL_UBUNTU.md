@@ -103,36 +103,77 @@ sudo mv /tmp/backend /opt/itsm/
 sudo mv /tmp/frontend /opt/itsm/
 ```
 
-### Paso 4: Configurar Backend
+### Paso 6: Configurar el Backend
+
 ```bash
 cd /opt/itsm/backend
 
-# Crear entorno virtual
+# Crear entorno virtual de Python
 python3 -m venv venv
+
+# Activar entorno virtual
 source venv/bin/activate
+
+# Actualizar pip
+pip install --upgrade pip
 
 # Instalar dependencias
 pip install -r requirements.txt
+```
 
-# Configurar variables de entorno
+**Si requirements.txt no existe, instalarlo manualmente:**
+
+```bash
+pip install fastapi uvicorn motor pymongo pydantic python-jose[cryptography] passlib[bcrypt] python-multipart sendgrid fpdf2 python-dotenv cryptography
+```
+
+### Paso 7: Crear Archivo .env del Backend
+
+```bash
+cd /opt/itsm/backend
+
+# Crear archivo .env
 sudo nano .env
 ```
 
-**Contenido del archivo .env:**
+**Copiar y pegar este contenido (modificar valores según tu servidor):**
+
 ```env
+# MongoDB
 MONGO_URL=mongodb://localhost:27017
 DB_NAME=itsm_db
-CORS_ORIGINS=http://localhost:3000,http://your-domain.com
-JWT_SECRET=your_super_secret_key_change_this_in_production
-ENCRYPTION_KEY=generate_key_with_fernet_or_use_existing
-SENDGRID_API_KEY=your_sendgrid_api_key_optional
-SENDER_EMAIL=noreply@your-domain.com
+
+# CORS (agregar tu dominio)
+CORS_ORIGINS=http://localhost:3000,http://tu-dominio.com,https://tu-dominio.com
+
+# JWT Secret (generar uno único y seguro)
+JWT_SECRET=CAMBIAR_POR_CLAVE_SEGURA_ALEATORIA_LARGA
+
+# Encryption Key (generar con el comando de abajo)
+ENCRYPTION_KEY=GENERAR_CON_COMANDO_ABAJO
+
+# SendGrid (OPCIONAL - solo si quieres enviar emails)
+SENDGRID_API_KEY=
+SENDER_EMAIL=noreply@tu-dominio.com
 ```
 
-**Generar ENCRYPTION_KEY:**
+**Generar ENCRYPTION_KEY seguro:**
+
 ```bash
 python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
+
+Copiar el resultado y pegarlo en `ENCRYPTION_KEY=` en el archivo .env
+
+**Generar JWT_SECRET seguro:**
+
+```bash
+openssl rand -hex 32
+```
+
+Copiar el resultado y pegarlo en `JWT_SECRET=` en el archivo .env
+
+**Guardar archivo:** `Ctrl + O`, `Enter`, `Ctrl + X`
 
 ### Paso 5: Configurar Frontend
 ```bash
