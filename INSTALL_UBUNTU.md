@@ -245,69 +245,103 @@ Abrir en navegador: `http://tu-ip:3000`
 
 Presionar `Ctrl + C` para detener.
 
-### Paso 6: Crear Servicios Systemd
+### Paso 11: Crear Servicios Systemd
 
-**Servicio Backend:**
+**11.1 - Crear servicio del Backend:**
+
 ```bash
 sudo nano /etc/systemd/system/itsm-backend.service
 ```
+
+**Copiar y pegar este contenido:**
 
 ```ini
 [Unit]
 Description=ITSM Backend API
 After=network.target mongod.service
+Wants=mongod.service
 
 [Service]
 Type=simple
-User=www-data
+User=root
 WorkingDirectory=/opt/itsm/backend
-Environment="PATH=/opt/itsm/backend/venv/bin"
-ExecStart=/opt/itsm/backend/venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000
+Environment="PATH=/opt/itsm/backend/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=/opt/itsm/backend/venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000 --workers 2
 Restart=always
 RestartSec=10
+StandardOutput=append:/var/log/itsm-backend.log
+StandardError=append:/var/log/itsm-backend.error.log
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-**Servicio Frontend:**
+**Guardar:** `Ctrl + O`, `Enter`, `Ctrl + X`
+
+**11.2 - Crear servicio del Frontend:**
+
 ```bash
 sudo nano /etc/systemd/system/itsm-frontend.service
 ```
 
+**Copiar y pegar este contenido:**
+
 ```ini
 [Unit]
-Description=ITSM Frontend
-After=network.target
+Description=ITSM Frontend React App
+After=network.target itsm-backend.service
 
 [Service]
 Type=simple
-User=www-data
+User=root
 WorkingDirectory=/opt/itsm/frontend
-Environment="PATH=/usr/bin:/usr/local/bin"
+Environment="PATH=/usr/bin:/usr/local/bin:/bin"
 Environment="NODE_ENV=production"
-ExecStart=/usr/bin/npm start
+Environment="PORT=3000"
+ExecStart=/usr/bin/yarn start
 Restart=always
 RestartSec=10
+StandardOutput=append:/var/log/itsm-frontend.log
+StandardError=append:/var/log/itsm-frontend.error.log
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-### Paso 7: Iniciar Servicios
+**Nota:** Si usas npm en lugar de yarn, cambiar `ExecStart=/usr/bin/npm start`
+
+**Guardar:** `Ctrl + O`, `Enter`, `Ctrl + X`
+
+### Paso 12: Iniciar los Servicios
+
 ```bash
-# Recargar systemd
+# Recargar configuración de systemd
 sudo systemctl daemon-reload
 
-# Habilitar e iniciar servicios
+# Habilitar servicios para que inicien al arrancar
 sudo systemctl enable itsm-backend
 sudo systemctl enable itsm-frontend
+
+# Iniciar servicios
 sudo systemctl start itsm-backend
 sudo systemctl start itsm-frontend
 
 # Verificar estado
 sudo systemctl status itsm-backend
 sudo systemctl status itsm-frontend
+```
+
+**Los servicios deberían mostrar:** `Active: active (running)`
+
+### Paso 13: Verificar que Funciona
+
+```bash
+# Verificar Backend
+curl http://localhost:8000/api/
+# Debe retornar: {"message":"Sistema ITSM API"}
+
+# Verificar Frontend (desde navegador)
+# http://tu-ip:3000
 ```
 
 ### Paso 8: Configurar Nginx (Opcional pero Recomendado)
