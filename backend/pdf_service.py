@@ -4,20 +4,30 @@ from datetime import datetime
 import os
 
 class ITSMReportPDF(FPDF):
-    def __init__(self, titulo: str = "Reporte ITSM"):
+    def __init__(self, titulo: str = "Reporte ITSM", logo_path: str = None, sistema_nombre: str = "Sistema ITSM"):
         super().__init__()
         self.titulo = titulo
+        self.logo_path = logo_path
+        self.sistema_nombre = sistema_nombre
         self.PAGE_WIDTH = 210
         self.MARGIN = 10
         self.width = self.PAGE_WIDTH - 2 * self.MARGIN
     
     def header(self):
+        # Si hay logo, agregarlo
+        if self.logo_path:
+            try:
+                self.image(self.logo_path, 10, 8, 30)
+                self.set_xy(45, 10)
+            except:
+                pass
+        
         self.set_font("helvetica", "B", 16)
         self.set_text_color(15, 23, 42)
         self.cell(0, 10, self.titulo, 0, 1, "C")
         self.set_font("helvetica", "", 9)
         self.set_text_color(100, 116, 139)
-        self.cell(0, 5, f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}", 0, 1, "C")
+        self.cell(0, 5, f"{self.sistema_nombre} - Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}", 0, 1, "C")
         self.ln(5)
     
     def footer(self):
