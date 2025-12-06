@@ -25,6 +25,20 @@ export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sistemaNombre, setSistemaNombre] = useState('Sistema ITSM');
 
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await api.get('/configuracion');
+        if (response.data.nombre_sistema) {
+          setSistemaNombre(response.data.nombre_sistema);
+        }
+      } catch (error) {
+        console.error('Error loading config:', error);
+      }
+    };
+    fetchConfig();
+  }, []);
+
   const navigationItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Empresas', path: '/empresas', icon: Building2 },
