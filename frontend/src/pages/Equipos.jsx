@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Plus, Edit, Trash2, Monitor, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { Checkbox } from '../components/ui/checkbox';
 
 export default function Equipos() {
   const [equipos, setEquipos] = useState([]);
