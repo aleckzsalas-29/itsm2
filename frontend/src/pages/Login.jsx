@@ -17,6 +17,20 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/configuracion`);
+        if (response.data.nombre_sistema) {
+          setSistemaNombre(response.data.nombre_sistema);
+        }
+      } catch (error) {
+        console.error('Error loading config:', error);
+      }
+    };
+    fetchConfig();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
