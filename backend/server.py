@@ -64,9 +64,11 @@ class EquipoCreate(BaseModel):
     password_correo: Optional[str] = None
     ubicacion: str
     estado: str = "Activo"
-    fecha_compra: Optional[datetime] = None
-    garantia_hasta: Optional[datetime] = None
-    costo: Optional[float] = None
+    memoria_ram: Optional[str] = None
+    disco_duro: Optional[str] = None
+    espacio_disponible: Optional[str] = None
+    procesador: Optional[str] = None
+    componentes: Optional[str] = None
     notas: Optional[str] = None
     campos_personalizados: Dict[str, Any] = {}
 
