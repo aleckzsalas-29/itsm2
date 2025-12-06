@@ -239,10 +239,11 @@ export default function Equipos() {
           <TableHeader>
             <TableRow className="border-b border-slate-200">
               <TableHead className="font-semibold text-slate-900">Nombre</TableHead>
-              <TableHead className="font-semibold text-slate-900">Empresa</TableHead>
               <TableHead className="font-semibold text-slate-900">Tipo</TableHead>
               <TableHead className="font-semibold text-slate-900">Marca/Modelo</TableHead>
               <TableHead className="font-semibold text-slate-900">Serie</TableHead>
+              <TableHead className="font-semibold text-slate-900">Procesador</TableHead>
+              <TableHead className="font-semibold text-slate-900">RAM</TableHead>
               <TableHead className="font-semibold text-slate-900">Ubicación</TableHead>
               <TableHead className="font-semibold text-slate-900">Estado</TableHead>
               <TableHead className="font-semibold text-slate-900">Contraseñas</TableHead>
@@ -252,25 +253,33 @@ export default function Equipos() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8">
+                <TableCell colSpan={10} className="text-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400" />
+                </TableCell>
+              </TableRow>
+            ) : !selectedEmpresa ? (
+              <TableRow>
+                <TableCell colSpan={10} className="text-center py-8 text-slate-500">
+                  <Monitor className="h-12 w-12 mx-auto mb-2 text-slate-300" />
+                  <p>Selecciona una empresa para ver sus equipos</p>
                 </TableCell>
               </TableRow>
             ) : equipos.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-slate-500">
+                <TableCell colSpan={10} className="text-center py-8 text-slate-500">
                   <Monitor className="h-12 w-12 mx-auto mb-2 text-slate-300" />
-                  <p>No hay equipos registrados</p>
+                  <p>No hay equipos registrados para esta empresa</p>
                 </TableCell>
               </TableRow>
             ) : (
               equipos.map((equipo) => (
                 <TableRow key={equipo._id} className="border-b border-slate-100 hover:bg-slate-50" data-testid="equipo-row">
                   <TableCell className="font-medium text-slate-900">{equipo.nombre}</TableCell>
-                  <TableCell className="text-slate-600">{getEmpresaNombre(equipo.empresa_id)}</TableCell>
                   <TableCell className="text-slate-600">{equipo.tipo}</TableCell>
                   <TableCell className="text-slate-600">{equipo.marca} {equipo.modelo}</TableCell>
                   <TableCell className="text-slate-600 font-mono text-xs">{equipo.numero_serie}</TableCell>
+                  <TableCell className="text-slate-600 text-sm">{equipo.procesador || '-'}</TableCell>
+                  <TableCell className="text-slate-600 text-sm">{equipo.memoria_ram || '-'}</TableCell>
                   <TableCell className="text-slate-600">{equipo.ubicacion}</TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 text-xs rounded-full ${
