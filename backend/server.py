@@ -81,9 +81,17 @@ class BitacoraCreate(BaseModel):
     fecha: Optional[datetime] = None
     estado: str = "Pendiente"
     observaciones: Optional[str] = None
-    costo: Optional[float] = None
     tiempo_estimado: Optional[int] = None
     tiempo_real: Optional[int] = None
+    limpieza_fisica: Optional[bool] = None
+    actualizacion_software: Optional[bool] = None
+    revision_hardware: Optional[bool] = None
+    respaldo_datos: Optional[bool] = None
+    optimizacion_sistema: Optional[bool] = None
+    diagnostico_problema: Optional[str] = None
+    solucion_aplicada: Optional[str] = None
+    componentes_reemplazados: Optional[str] = None
+    anotaciones_extras: Optional[str] = None
     campos_personalizados: Dict[str, Any] = {}
 
 class ServicioCreate(BaseModel):
