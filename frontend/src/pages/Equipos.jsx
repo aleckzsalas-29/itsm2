@@ -19,6 +19,7 @@ export default function Equipos() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEquipo, setEditingEquipo] = useState(null);
   const [showPasswords, setShowPasswords] = useState({});
+  const [customFields, setCustomFields] = useState([]);
   const [formData, setFormData] = useState({
     empresa_id: '',
     nombre: '',
@@ -38,6 +39,7 @@ export default function Equipos() {
     procesador: '',
     componentes: '',
     notas: '',
+    campos_personalizados: {},
   });
 
   useEffect(() => {
