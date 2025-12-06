@@ -87,9 +87,20 @@ class Bitacora(BaseModel):
     fecha: datetime = Field(default_factory=datetime.utcnow)
     estado: str = "Pendiente"  # Pendiente, En Progreso, Completado
     observaciones: Optional[str] = None
-    costo: Optional[float] = None
     tiempo_estimado: Optional[int] = None  # en minutos
     tiempo_real: Optional[int] = None
+    # Campos mantenimiento preventivo
+    limpieza_fisica: Optional[bool] = None
+    actualizacion_software: Optional[bool] = None
+    revision_hardware: Optional[bool] = None
+    respaldo_datos: Optional[bool] = None
+    optimizacion_sistema: Optional[bool] = None
+    # Campos mantenimiento correctivo
+    diagnostico_problema: Optional[str] = None
+    solucion_aplicada: Optional[str] = None
+    componentes_reemplazados: Optional[str] = None
+    # Anotaciones extras
+    anotaciones_extras: Optional[str] = None
     creado_en: datetime = Field(default_factory=datetime.utcnow)
     campos_personalizados: Dict[str, Any] = Field(default_factory=dict)
     
