@@ -204,12 +204,34 @@ export default function Equipos() {
             resetForm();
             setDialogOpen(true);
           }}
+          disabled={!selectedEmpresa}
           className="bg-slate-900 hover:bg-slate-800 text-white rounded-sm shadow-none"
           data-testid="add-equipo-button"
         >
           <Plus className="mr-2 h-4 w-4" />
           Nuevo Equipo
         </Button>
+      </div>
+
+      <div className="bg-white rounded-sm border border-slate-200 shadow-none p-4">
+        <div className="max-w-md">
+          <Label className="text-sm font-medium text-slate-700 mb-2 block">Seleccionar Empresa</Label>
+          <Select
+            value={selectedEmpresa}
+            onValueChange={setSelectedEmpresa}
+          >
+            <SelectTrigger className="rounded-sm border-slate-300" data-testid="empresa-filter-select">
+              <SelectValue placeholder="Seleccionar empresa" />
+            </SelectTrigger>
+            <SelectContent>
+              {empresas.map((empresa) => (
+                <SelectItem key={empresa._id} value={empresa._id}>
+                  {empresa.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="bg-white rounded-sm border border-slate-200 shadow-none overflow-x-auto">
