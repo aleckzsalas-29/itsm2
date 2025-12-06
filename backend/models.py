@@ -62,9 +62,11 @@ class Equipo(BaseModel):
     password_correo_encrypted: Optional[str] = None
     ubicacion: str
     estado: str = "Activo"  # Activo, Inactivo, Mantenimiento
-    fecha_compra: Optional[datetime] = None
-    garantia_hasta: Optional[datetime] = None
-    costo: Optional[float] = None
+    memoria_ram: Optional[str] = None
+    disco_duro: Optional[str] = None
+    espacio_disponible: Optional[str] = None
+    procesador: Optional[str] = None
+    componentes: Optional[str] = None
     notas: Optional[str] = None
     creado_en: datetime = Field(default_factory=datetime.utcnow)
     actualizado_en: datetime = Field(default_factory=datetime.utcnow)
