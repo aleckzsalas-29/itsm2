@@ -539,7 +539,22 @@ async def generate_equipo_report(equipo_id: str, current_user: Dict = Depends(ge
         bitacoras.append(bitacora)
     
     try:
-        filename = pdf_service.generate_equipo_report(equipo, bitacoras)
+        # Obtener configuración para logo y nombre
+        config = await db.configuracion.find_one({})
+        logo_path = None
+        sistema_nombre = "Sistema ITSM"
+        
+        if config:
+            sistema_nombre = config.get("nombre_sistema", "Sistema ITSM")
+            if config.get("logo_url") and config["logo_url"].startswith("data:image"):
+                import base64
+                logo_data = config["logo_url"].split(",")[1]
+                logo_bytes = base64.b64decode(logo_data)
+                logo_path = "/tmp/logo_temp.png"
+                with open(logo_path, "wb") as f:
+                    f.write(logo_bytes)
+        
+        filename = pdf_service.generate_equipo_report(equipo, bitacoras, logo_path, sistema_nombre)
         return {"filename": filename, "message": "Reporte generado exitosamente"}
     except Exception as e:
         logger.error(f"Error generating report: {str(e)}")
