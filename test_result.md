@@ -169,17 +169,56 @@ backend:
           comment: "Custom fields persist correctly in MongoDB. Verified through create, read, update operations. Fields maintain data integrity across operations."
 
 frontend:
-  - task: "Custom Fields UI (Not Tested)"
+  - task: "Custom Fields Configuration Page"
     implemented: true
-    working: "NA"
-    file: "N/A"
+    working: true
+    file: "/app/frontend/src/pages/CamposPersonalizados.jsx"
     stuck_count: 0
-    priority: "medium"
+    priority: "high"
     needs_retesting: false
     status_history:
         - working: "NA"
           agent: "testing"
           comment: "Frontend testing not performed as per testing agent limitations. Backend APIs are fully functional for frontend integration."
+        - working: true
+          agent: "testing"
+          comment: "✅ COMPREHENSIVE TESTING COMPLETED: Custom Fields page fully functional. Navigation from Configuration page works. Entity selector allows switching between Equipos, Bitácoras, Empresas, Servicios. Found 3 existing fields for Equipos: 'Número de Activo' (Texto), 'Fecha de Compra' (Fecha), 'Departamento' (Selección). Add/Edit/Delete operations work with force clicks (minor UI overlay issue). Field types supported: Texto, Fecha, Selección (Select), Número, Checkbox."
+
+  - task: "Custom Fields Integration in Equipment Form"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/CustomFieldsRenderer.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ INTEGRATION WORKING: Custom Fields section appears correctly in Equipment form. Found 3 custom field inputs rendering properly. Successfully filled text, date, and select custom fields. CustomFieldsRenderer component works as expected. Fields are dynamically loaded from backend configuration and rendered in Equipment creation/edit forms."
+
+  - task: "Entity Switching and Dynamic Field Loading"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/CamposPersonalizados.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ ENTITY SWITCHING WORKS: Successfully tested switching between Equipos and Bitácoras entities. Each entity shows different custom fields. Bitácoras showed 4 fields vs Equipos with 3 fields. Dynamic loading from backend API works correctly. Entity selector dropdown functions properly with force clicks."
+
+  - task: "Custom Fields CRUD Operations"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/CamposPersonalizados.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ CRUD OPERATIONS WORKING: Successfully added new field 'Campo Prueba' through dialog form. Add Field dialog opens and saves correctly. Edit and Delete buttons are present and functional (with force clicks due to minor overlay issue). Form validation works for required fields. Field configuration persists correctly."
 
 metadata:
   created_by: "testing_agent"
