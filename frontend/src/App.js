@@ -4,6 +4,11 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Empresas from "./pages/Empresas";
+import Equipos from "./pages/Equipos";
+import Bitacoras from "./pages/Bitacoras";
+import Servicios from "./pages/Servicios";
+import Reportes from "./pages/Reportes";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
@@ -50,7 +55,7 @@ function App() {
             path="/empresas"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Empresas" />
+                <Empresas />
               </ProtectedRoute>
             }
           />
@@ -58,7 +63,7 @@ function App() {
             path="/equipos"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Equipos" />
+                <Equipos />
               </ProtectedRoute>
             }
           />
@@ -66,7 +71,7 @@ function App() {
             path="/bitacoras"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Bitácoras" />
+                <Bitacoras />
               </ProtectedRoute>
             }
           />
@@ -74,7 +79,7 @@ function App() {
             path="/servicios"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Servicios" />
+                <Servicios />
               </ProtectedRoute>
             }
           />
@@ -82,7 +87,7 @@ function App() {
             path="/reportes"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Reportes" />
+                <Reportes />
               </ProtectedRoute>
             }
           />
