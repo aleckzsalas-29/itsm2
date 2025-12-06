@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 export default function Equipos() {
   const [equipos, setEquipos] = useState([]);
   const [empresas, setEmpresas] = useState([]);
+  const [selectedEmpresa, setSelectedEmpresa] = useState('');
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEquipo, setEditingEquipo] = useState(null);
@@ -31,28 +32,48 @@ export default function Equipos() {
     password_correo: '',
     ubicacion: '',
     estado: 'Activo',
-    fecha_compra: '',
-    garantia_hasta: '',
-    costo: '',
+    memoria_ram: '',
+    disco_duro: '',
+    espacio_disponible: '',
+    procesador: '',
+    componentes: '',
     notas: '',
   });
 
   useEffect(() => {
-    fetchData();
+    fetchEmpresas();
   }, []);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    if (selectedEmpresa) {
+      fetchEquipos();
+    } else {
+      setEquipos([]);
+    }
+  }, [selectedEmpresa]);
+
+  const fetchEmpresas = async () => {
     try {
-      const [equiposRes, empresasRes] = await Promise.all([
-        api.get('/equipos'),
-        api.get('/empresas')
-      ]);
-      setEquipos(equiposRes.data);
-      setEmpresas(empresasRes.data);
+      const response = await api.get('/empresas');
+      setEmpresas(response.data);
+      if (response.data.length > 0) {
+        setSelectedEmpresa(response.data[0]._id);
+      }
     } catch (error) {
-      toast.error('Error al cargar datos');
+      toast.error('Error al cargar empresas');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEquipos = async () => {
+    if (!selectedEmpresa) return;
+    
+    try {
+      const response = await api.get(`/equipos?empresa_id=${selectedEmpresa}`);
+      setEquipos(response.data);
+    } catch (error) {
+      toast.error('Error al cargar equipos');
     }
   };
 
