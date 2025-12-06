@@ -654,6 +654,53 @@ async def update_configuracion(request: ConfiguracionUpdate, current_user: Dict 
     
     return {"message": "Configuración actualizada"}
 
+@api_router.get("/configuracion/campos/{entity_type}")
+async def get_custom_fields_config(entity_type: str, current_user: Dict = Depends(get_current_user)):
+    """Obtener configuración de campos personalizados para una entidad"""
+    valid_entities = ["empresas", "equipos", "bitacoras", "servicios"]
+    if entity_type not in valid_entities:
+        raise HTTPException(status_code=400, detail="Tipo de entidad no válido")
+    
+    config = await db.configuracion.find_one({})
+    if not config:
+        return {f"campos_{entity_type}": []}
+    
+    field_name = f"campos_{entity_type}"
+    return {field_name: config.get(field_name, [])}
+
+@api_router.put("/configuracion/campos/{entity_type}")
+async def update_custom_fields_config(
+    entity_type: str, 
+    campos: List[Dict[str, Any]] = Body(...),
+    current_user: Dict = Depends(get_admin_user)
+):
+    """Actualizar configuración de campos personalizados para una entidad"""
+    valid_entities = ["empresas", "equipos", "bitacoras", "servicios"]
+    if entity_type not in valid_entities:
+        raise HTTPException(status_code=400, detail="Tipo de entidad no válido")
+    
+    field_name = f"campos_{entity_type}"
+    
+    # Validar estructura de campos
+    for campo in campos:
+        if "nombre" not in campo or "tipo" not in campo:
+            raise HTTPException(status_code=400, detail="Cada campo debe tener 'nombre' y 'tipo'")
+        
+        valid_types = ["texto", "numero", "fecha", "select", "checkbox"]
+        if campo["tipo"] not in valid_types:
+            raise HTTPException(status_code=400, detail=f"Tipo de campo no válido: {campo['tipo']}")
+        
+        if campo["tipo"] == "select" and "opciones" not in campo:
+            raise HTTPException(status_code=400, detail="Los campos tipo 'select' deben tener 'opciones'")
+    
+    result = await db.configuracion.update_one(
+        {},
+        {"$set": {field_name: campos, "actualizado_en": datetime.utcnow()}},
+        upsert=True
+    )
+    
+    return {"message": f"Configuración de campos para {entity_type} actualizada", field_name: campos}
+
 @api_router.post("/configuracion/logo")
 async def upload_logo(file: bytes = Body(...), current_user: Dict = Depends(get_admin_user)):
     from fastapi import UploadFile, File
