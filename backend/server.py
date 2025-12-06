@@ -538,6 +538,68 @@ async def download_report(filename: str):
     
     return FileResponse(filepath, media_type="application/pdf", filename=filename)
 
+@api_router.get("/bitacoras/exportar")
+async def exportar_bitacoras(
+    empresa_id: str,
+    periodo: str,
+    fecha_inicio: Optional[str] = None,
+    current_user: Dict = Depends(get_current_user)
+):
+    import csv
+    from io import StringIO
+    from datetime import timedelta
+    
+    # Calcular rango de fechas según período
+    fecha_fin = datetime.utcnow()
+    if periodo == "dia":
+        fecha_inicio_dt = fecha_fin - timedelta(days=1)
+    elif periodo == "semana":
+        fecha_inicio_dt = fecha_fin - timedelta(weeks=1)
+    elif periodo == "mes":
+        fecha_inicio_dt = fecha_fin - timedelta(days=30)
+    else:
+        if fecha_inicio:
+            fecha_inicio_dt = datetime.fromisoformat(fecha_inicio)
+        else:
+            fecha_inicio_dt = datetime.utcnow() - timedelta(days=30)
+    
+    # Consultar bitácoras
+    query = {
+        "empresa_id": empresa_id,
+        "fecha": {"$gte": fecha_inicio_dt, "$lte": fecha_fin}
+    }
+    
+    bitacoras = []
+    async for bitacora in db.bitacoras.find(query).sort("fecha", -1):
+        equipo = await db.equipos.find_one({"_id": ObjectId(bitacora["equipo_id"])})
+        tecnico = await db.usuarios.find_one({"_id": ObjectId(bitacora["tecnico_id"])})
+        
+        bitacoras.append({
+            "fecha": bitacora["fecha"].strftime("%d/%m/%Y %H:%M"),
+            "equipo": equipo.get("nombre") if equipo else "N/A",
+            "tipo": bitacora["tipo"],
+            "descripcion": bitacora["descripcion"],
+            "tecnico": tecnico.get("nombre") if tecnico else "N/A",
+            "estado": bitacora["estado"],
+            "observaciones": bitacora.get("observaciones", ""),
+            "anotaciones_extras": bitacora.get("anotaciones_extras", "")
+        })
+    
+    # Crear CSV
+    output = StringIO()
+    if bitacoras:
+        writer = csv.DictWriter(output, fieldnames=bitacoras[0].keys())
+        writer.writeheader()
+        writer.writerows(bitacoras)
+    
+    from fastapi.responses import StreamingResponse
+    output.seek(0)
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=bitacoras_{empresa_id}_{periodo}.csv"}
+    )
+
 @api_router.get("/configuracion")
 async def get_configuracion(current_user: Dict = Depends(get_current_user)):
     config = await db.configuracion.find_one({})
