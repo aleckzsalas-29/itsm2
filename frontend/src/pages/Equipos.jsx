@@ -163,6 +163,7 @@ export default function Equipos() {
       procesador: equipo.procesador || '',
       componentes: equipo.componentes || '',
       notas: equipo.notas || '',
+      campos_personalizados: equipo.campos_personalizados || {},
     });
     setDialogOpen(true);
   };
@@ -187,6 +188,7 @@ export default function Equipos() {
       procesador: '',
       componentes: '',
       notas: '',
+      campos_personalizados: {},
     });
     setEditingEquipo(null);
   };
