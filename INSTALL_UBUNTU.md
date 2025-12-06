@@ -1,43 +1,106 @@
-# Instrucciones de Instalación - Sistema ITSM
-## Instalación en Servidor Ubuntu
+# 📋 Guía de Instalación - Sistema ITSM en Ubuntu
 
-### Requisitos Previos
-- Ubuntu 20.04 LTS o superior
-- Python 3.9 o superior
-- Node.js 18 o superior
-- MongoDB 5.0 o superior
+## Requisitos Previos
+- ✅ **Servidor Ubuntu 20.04 LTS o superior**
+- ✅ **Acceso root o sudo**
+- ✅ **Mínimo 2GB RAM**
+- ✅ **Mínimo 10GB de espacio en disco**
+- ✅ **Conexión a Internet**
+
+---
+
+## 🚀 INSTALACIÓN PASO A PASO
 
 ### Paso 1: Actualizar el Sistema
+
+Conectarse al servidor y actualizar paquetes:
+
 ```bash
 sudo apt update && sudo apt upgrade -y
+sudo apt install curl wget git build-essential -y
 ```
 
-### Paso 2: Instalar Dependencias del Sistema
+### Paso 2: Instalar Python 3.10+
+
 ```bash
 # Instalar Python y herramientas
-sudo apt install python3 python3-pip python3-venv git -y
+sudo apt install python3 python3-pip python3-venv -y
 
-# Instalar Node.js y npm
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install nodejs -y
-
-# Instalar MongoDB
-wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
-sudo apt update
-sudo apt install mongodb-org -y
-sudo systemctl start mongod
-sudo systemctl enable mongod
+# Verificar versión (debe ser 3.9+)
+python3 --version
 ```
 
-### Paso 3: Clonar o Copiar el Proyecto
+### Paso 3: Instalar Node.js 18
+
 ```bash
-# Clonar desde repositorio o copiar archivos
-cd /opt
-sudo git clone <tu-repositorio> itsm
-# O copiar archivos manualmente
+# Agregar repositorio de Node.js
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+
+# Instalar Node.js y npm
+sudo apt install nodejs -y
+
+# Verificar versiones
+node --version   # Debe mostrar v18.x.x
+npm --version    # Debe mostrar 9.x.x o superior
+```
+
+### Paso 4: Instalar MongoDB 5.0+
+
+```bash
+# Importar clave pública de MongoDB
+wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
+
+# Crear archivo de lista para MongoDB (Ubuntu 20.04)
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+
+# Actualizar e instalar MongoDB
+sudo apt update
+sudo apt install mongodb-org -y
+
+# Iniciar y habilitar MongoDB
+sudo systemctl start mongod
+sudo systemctl enable mongod
+
+# Verificar que MongoDB está corriendo
+sudo systemctl status mongod
+```
+
+### Paso 5: Descargar el Proyecto
+
+**OPCIÓN A: Desde este entorno (Emergent)**
+
+```bash
+# Crear directorio
 sudo mkdir -p /opt/itsm
-# Copiar backend/ y frontend/ al directorio /opt/itsm
+
+# Descargar archivos desde Emergent
+# (Usar el botón de descarga en Emergent para obtener el ZIP completo)
+# Luego subir al servidor y descomprimir
+
+cd /opt
+sudo unzip itsm.zip
+sudo mv <carpeta-descomprimida> itsm
+```
+
+**OPCIÓN B: Desde repositorio Git (si ya lo subiste)**
+
+```bash
+cd /opt
+sudo git clone <URL-de-tu-repositorio> itsm
+```
+
+**OPCIÓN C: Copiar archivos manualmente**
+
+Desde tu máquina local, usar SCP:
+
+```bash
+# En tu máquina local
+scp -r ./backend ./frontend usuario@tu-servidor:/tmp/
+
+# En el servidor
+sudo mkdir -p /opt/itsm
+sudo mv /tmp/backend /opt/itsm/
+sudo mv /tmp/frontend /opt/itsm/
 ```
 
 ### Paso 4: Configurar Backend
