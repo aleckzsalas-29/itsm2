@@ -762,30 +762,123 @@ sudo systemctl restart mongod
 mongo --eval "db.adminCommand('ping')"
 ```
 
-## Actualización
+## 🔄 Actualización del Sistema
+
+### Proceso de Actualización Completo
 
 ```bash
+# 1. Detener servicios temporalmente
+sudo systemctl stop itsm-backend
+sudo systemctl stop itsm-frontend
+
+# 2. Backup OBLIGATORIO de base de datos antes de actualizar
+sudo mkdir -p /backup/itsm
+sudo mongodump --db itsm_db --out /backup/itsm/backup_pre_update_$(date +%Y%m%d_%H%M%S)
+
+# 3. Navegar al directorio del proyecto
 cd /opt/itsm
 
-# Backup de base de datos
-mongodump --db itsm_db --out /backup/itsm_backup_pre_update
+# 4. Actualizar código (elegir una opción)
 
-# Actualizar código
-git pull origin main  # o copiar nuevos archivos
+## OPCIÓN A: Desde Git
+git pull origin main
 
-# Actualizar backend
+## OPCIÓN B: Subir manualmente archivos nuevos
+# (Usar SCP o SFTP para subir archivos actualizados)
+
+# 5. Actualizar dependencias del Backend
+cd /opt/itsm/backend
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 6. Actualizar dependencias del Frontend
+cd /opt/itsm/frontend
+yarn install
+# O si usas npm:
+# npm install
+
+# 7. Verificar archivos .env (NO sobrescribir si ya existen)
+# Revisar si hay nuevas variables de entorno en la documentación
+ls -la /opt/itsm/backend/.env
+ls -la /opt/itsm/frontend/.env
+
+# 8. Iniciar servicios nuevamente
+sudo systemctl start itsm-backend
+sudo systemctl start itsm-frontend
+
+# 9. Verificar que todo funciona
+sudo systemctl status itsm-backend
+sudo systemctl status itsm-frontend
+
+# 10. Verificar en el navegador
+curl http://localhost:8000/api/
+# Debe retornar: {"message":"Sistema ITSM API"}
+```
+
+### Verificar Logs Después de Actualizar
+
+```bash
+# Ver logs del backend
+sudo journalctl -u itsm-backend -n 50
+
+# Ver logs del frontend
+sudo journalctl -u itsm-frontend -n 50
+
+# Si hay errores, revisar logs detallados
+sudo tail -f /var/log/itsm-backend.error.log
+sudo tail -f /var/log/itsm-frontend.log
+```
+
+### Rollback en Caso de Problemas
+
+Si algo falla después de la actualización:
+
+```bash
+# 1. Detener servicios
+sudo systemctl stop itsm-backend
+sudo systemctl stop itsm-frontend
+
+# 2. Restaurar base de datos desde backup
+sudo mongorestore --db itsm_db --drop /backup/itsm/backup_pre_update_FECHA/itsm_db
+
+# 3. Revertir código (si usas Git)
+cd /opt/itsm
+git reset --hard HEAD~1
+
+# 4. Reinstalar dependencias anteriores
 cd backend
 source venv/bin/activate
 pip install -r requirements.txt
 
-# Actualizar frontend
 cd ../frontend
-npm install
+yarn install
 
-# Reiniciar servicios
-sudo systemctl restart itsm-backend
-sudo systemctl restart itsm-frontend
+# 5. Reiniciar servicios
+sudo systemctl start itsm-backend
+sudo systemctl start itsm-frontend
 ```
+
+### Changelog de Versiones
+
+**Versión Actual (Diciembre 2024):**
+- ✅ Sistema completo de gestión ITSM
+- ✅ Módulos: Empresas, Equipos, Bitácoras, Servicios, Reportes, Usuarios
+- ✅ **NUEVO:** Campos Personalizados dinámicos para todas las entidades
+- ✅ Componente reutilizable `CustomFieldsRenderer` para renderizado de campos
+- ✅ Página de configuración de campos (`/campos-personalizados`)
+- ✅ API completa para gestión de campos custom
+- ✅ Encriptación de credenciales con Fernet
+- ✅ Generación de reportes PDF con logo personalizable
+- ✅ Exportación CSV de bitácoras
+- ✅ Integración SendGrid para notificaciones (opcional)
+- ✅ Autenticación JWT
+- ✅ Compatibilidad con Pydantic v2
+
+**Notas de Migración:**
+- Si actualizas desde una versión sin campos personalizados, la migración es automática
+- Los modelos ya incluyen el campo `campos_personalizados` como diccionario vacío por defecto
+- No se requieren cambios manuales en la base de datos
 
 ## Soporte
 
