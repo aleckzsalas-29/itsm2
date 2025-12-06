@@ -1,0 +1,184 @@
+{
+  "identity": {
+    "name": "E1: The Anti-AI Designer",
+    "archetype": "Swiss & High-Contrast",
+    "tone": "Professional, Sober, Technical, Precision",
+    "core_principles": [
+      "Fusion over Imitation: Mix Swiss Poster aesthetics with Control Room density",
+      "Content is King: Data legibility is the primary goal",
+      "Contrast: Use light vs. dark and thin vs. thick lines to create hierarchy",
+      "Negative Space: Use whitespace to separate data clusters, not just for decoration"
+    ]
+  },
+  "typography": {
+    "fonts": {
+      "headings": {
+        "family": "Manrope",
+        "weights": ["600", "700"],
+        "usage": "Page titles, Section headers, KPI values",
+        "fallback": "sans-serif"
+      },
+      "body": {
+        "family": "Inter",
+        "weights": ["400", "500"],
+        "usage": "General text, labels, descriptions",
+        "fallback": "sans-serif"
+      },
+      "mono": {
+        "family": "JetBrains Mono",
+        "weights": ["400", "500"],
+        "usage": "IP addresses, Passwords, Serial Numbers, Logs, Code snippets",
+        "fallback": "monospace"
+      }
+    },
+    "rules": [
+      "Headings (h1-h3) must use tight tracking (-0.02em)",
+      "Overlines/Labels must be Uppercase, text-xs, and tracking-widest",
+      "Data values (KPIs) must be large (text-3xl+) and bold",
+      "Table data must be text-sm or text-xs for density"
+    ]
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "light": "#0F172A",
+        "dark": "#F8FAFC",
+        "description": "Slate 900 (Light Mode) / Slate 50 (Dark Mode) - Used for primary text and solid backgrounds"
+      },
+      "accent": {
+        "default": "#2563EB",
+        "hover": "#1D4ED8",
+        "description": "Signal Blue - Used for primary buttons, active states, and links"
+      },
+      "background": {
+        "light": "#FFFFFF",
+        "dark": "#020617",
+        "description": "Pure White / Deep Slate"
+      },
+      "surface": {
+        "light": "#F1F5F9",
+        "dark": "#0F172A",
+        "description": "Slate 100 / Slate 900 - Used for sidebars and card backgrounds"
+      },
+      "border": {
+        "light": "#E2E8F0",
+        "dark": "#1E293B",
+        "description": "Slate 200 / Slate 800 - Used for grid lines and dividers"
+      },
+      "status": {
+        "success": "#10B981",
+        "warning": "#F59E0B",
+        "error": "#EF4444",
+        "info": "#3B82F6"
+      }
+    },
+    "usage_rules": [
+      "Never use gradients for backgrounds. Use solid colors or subtle noise textures.",
+      "Use 'Tinted Grey' rule: Neutrals should have a slight blue tint (Slate) to feel technical.",
+      "Interactive elements must have a contrast ratio of at least 3:1.",
+      "Dark mode backgrounds should be #020617 (Slate 950), not pure black."
+    ]
+  },
+  "layout": {
+    "grid_system": {
+      "dashboard": "Control Room Grid: grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4",
+      "detail_view": "Sidebar + Content: grid-cols-12 gap-6 (Sidebar col-span-3, Content col-span-9)",
+      "form": "Dense Form Grid: grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4"
+    },
+    "spacing": {
+      "container_padding": "p-6 or p-8",
+      "element_gap": "gap-4",
+      "section_margin": "my-8"
+    },
+    "surface_strategy": "Grid Borders",
+    "surface_rules": [
+      "Containers should use border-collapse style layouts where possible.",
+      "Cards should have 1px borders (border-border) and NO shadow (shadow-none) by default.",
+      "Hover states on cards: border-accent/50 and shadow-sm.",
+      "Sidebars should have a solid border-r."
+    ]
+  },
+  "components": {
+    "buttons": {
+      "style": "Sharp or slightly rounded (rounded-sm)",
+      "variants": {
+        "primary": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-none",
+        "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-input shadow-none",
+        "ghost": "hover:bg-accent hover:text-accent-foreground"
+      }
+    },
+    "cards": {
+      "style": "Flat, Bordered, No Shadow",
+      "classes": "border border-border bg-card text-card-foreground shadow-none rounded-sm"
+    },
+    "inputs": {
+      "style": "Minimal, Bordered",
+      "classes": "h-9 rounded-sm border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+    },
+    "tables": {
+      "style": "Dense, Linear",
+      "classes": "w-full caption-bottom text-sm border-collapse",
+      "header": "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "row": "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+    },
+    "modals": {
+      "overlay": "bg-background/80 backdrop-blur-sm",
+      "content": "border border-border shadow-lg sm:rounded-lg"
+    }
+  },
+  "visual_enhancers": {
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px (Thin/Linear feel)",
+      "size": "w-4 h-4 (small) or w-5 h-5 (standard)"
+    },
+    "textures": {
+      "noise": "Optional: Add a subtle noise texture to the sidebar background for a 'tactile' feel."
+    },
+    "motion": {
+      "duration": "duration-200",
+      "easing": "ease-out",
+      "types": [
+        "Fade in: opacity-0 -> opacity-100",
+        "Slide up: translate-y-2 -> translate-y-0",
+        "Scale: scale-95 -> scale-100 (for modals)"
+      ]
+    }
+  },
+  "accessibility": {
+    "rules": [
+      "All interactive elements MUST have a data-testid attribute (kebab-case).",
+      "Ensure text contrast meets APCA standards (4.5:1 for normal text).",
+      "Focus states must be clearly visible (ring-2 ring-ring).",
+      "Do not rely on color alone for status (use icons + color)."
+    ]
+  },
+  "image_urls": {
+    "login_background": {
+      "url": "https://images.unsplash.com/photo-1611494173983-f20777a1b837?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMG1pbmltYWxpc3QlMjB0ZWNobm9sb2d5JTIwZ2VvbWV0cnklMjBzZXJ2ZXIlMjByb29tJTIwYmx1ZSUyMGdyZXl8ZW58MHx8fHwxNzY1MDAwOTQ4fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Holographic Wall / Abstract Tech Background for Login Screen",
+      "category": "background"
+    },
+    "placeholder_logo": {
+      "url": "https://via.placeholder.com/150x50?text=ITSM+Logo",
+      "description": "Placeholder for customizable logo",
+      "category": "logo"
+    }
+  },
+  "instructions_to_main_agent": {
+    "file_extension": "Use .jsx for all React components (not .tsx).",
+    "component_location": "Use existing Shadcn components in /app/frontend/src/components/ui/. Customize them via props or utility classes rather than rewriting them.",
+    "state_management": "Use React Context or simple state for this MVP. Do not introduce Redux unless necessary.",
+    "routing": "Use react-router-dom for navigation.",
+    "api_client": "Create a centralized axios instance or fetch wrapper in /app/frontend/src/lib/api.js.",
+    "theme_toggle": "Implement a ThemeProvider that toggles a 'dark' class on the html/body element."
+  },
+  "universal_guidelines": [
+    "Do not use generic centered layouts. Use the 'Control Room' grid.",
+    "Use 2-3x more spacing than feels comfortable (p-6, p-8).",
+    "Every interaction needs micro-animations (hover, focus, active).",
+    "All interactive elements MUST include data-testid.",
+    "Do not use gradients for text or backgrounds unless specified.",
+    "Use 'sonner' for toast notifications."
+  ]
+}
