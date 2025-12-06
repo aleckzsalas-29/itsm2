@@ -44,7 +44,17 @@ export default function Equipos() {
 
   useEffect(() => {
     fetchEmpresas();
+    fetchCustomFields();
   }, []);
+
+  const fetchCustomFields = async () => {
+    try {
+      const response = await api.get('/configuracion/campos/equipos');
+      setCustomFields(response.data.campos_equipos || []);
+    } catch (error) {
+      console.error('Error loading custom fields:', error);
+    }
+  };
 
   useEffect(() => {
     if (selectedEmpresa) {
