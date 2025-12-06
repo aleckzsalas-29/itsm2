@@ -9,6 +9,7 @@ import Equipos from "./pages/Equipos";
 import Bitacoras from "./pages/Bitacoras";
 import Servicios from "./pages/Servicios";
 import Reportes from "./pages/Reportes";
+import Usuarios from "./pages/Usuarios";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
 
