@@ -124,8 +124,10 @@ pip install -r requirements.txt
 **Si requirements.txt no existe, instalarlo manualmente:**
 
 ```bash
-pip install fastapi uvicorn motor pymongo pydantic python-jose[cryptography] passlib[bcrypt] python-multipart sendgrid fpdf2 python-dotenv cryptography
+pip install fastapi uvicorn motor pymongo pydantic python-jose[cryptography] passlib[bcrypt] python-multipart sendgrid fpdf2 python-dotenv cryptography email-validator
 ```
+
+**Nota:** El sistema requiere Python 3.9+ para funcionalidad completa de Pydantic v2.
 
 ### Paso 7: Crear Archivo .env del Backend
 
