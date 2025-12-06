@@ -52,7 +52,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-sm border border-slate-200 shadow-sm p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>Sistema ITSM</h1>
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'Manrope, sans-serif' }}>{sistemaNombre}</h1>
             <p className="text-slate-600 mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Ingresa tus credenciales para continuar</p>
           </div>
 
