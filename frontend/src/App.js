@@ -105,7 +105,7 @@ function App() {
             path="/configuracion"
             element={
               <ProtectedRoute>
-                <PlaceholderPage title="Configuración" />
+                <Configuracion />
               </ProtectedRoute>
             }
           />
