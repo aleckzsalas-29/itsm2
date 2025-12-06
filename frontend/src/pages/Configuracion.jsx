@@ -114,6 +114,27 @@ export default function Configuracion() {
         <p className="text-slate-600 mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Personaliza el sistema</p>
       </div>
 
+      <Card className="border border-blue-200 shadow-none rounded-sm bg-blue-50">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-1" style={{ fontFamily: 'Manrope, sans-serif' }}>
+                🎯 Gestionar Campos Personalizados
+              </h3>
+              <p className="text-sm text-slate-600">
+                Añade, edita o elimina campos personalizados para Empresas, Equipos, Bitácoras y Servicios
+              </p>
+            </div>
+            <Button
+              onClick={() => window.location.href = '/campos-personalizados'}
+              className="bg-slate-900 hover:bg-slate-800 text-white rounded-sm shadow-none"
+            >
+              Configurar Campos
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border border-slate-200 shadow-none rounded-sm">
           <CardHeader>
