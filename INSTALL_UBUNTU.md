@@ -880,6 +880,221 @@ sudo systemctl start itsm-frontend
 - Los modelos ya incluyen el campo `campos_personalizados` como diccionario vacío por defecto
 - No se requieren cambios manuales en la base de datos
 
-## Soporte
+## 📚 Documentación Adicional
 
-Para soporte adicional o reportar problemas, contacta al administrador del sistema o consulta la documentación en el repositorio.
+### Archivos de Documentación
+
+El sistema incluye los siguientes archivos de documentación:
+
+- **`INSTALL_UBUNTU.md`** (este archivo): Guía completa de instalación para Ubuntu
+- **`CAMPOS_PERSONALIZADOS_GUIDE.md`**: Guía detallada sobre campos personalizados
+  - Cómo implementar campos custom en otras páginas
+  - Ejemplos de uso de la API
+  - Estructura de datos en MongoDB
+
+### Estructura del Proyecto
+
+```
+/opt/itsm/
+├── backend/
+│   ├── server.py              # API FastAPI principal
+│   ├── models.py              # Modelos Pydantic
+│   ├── auth.py                # Autenticación JWT y encriptación
+│   ├── database.py            # Conexión a MongoDB
+│   ├── email_service.py       # Integración SendGrid
+│   ├── pdf_service.py         # Generación de PDFs
+│   ├── requirements.txt       # Dependencias Python
+│   ├── .env                   # Variables de entorno (CREAR)
+│   └── venv/                  # Entorno virtual Python
+├── frontend/
+│   ├── src/
+│   │   ├── pages/             # Páginas React
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Empresas.jsx
+│   │   │   ├── Equipos.jsx
+│   │   │   ├── Bitacoras.jsx
+│   │   │   ├── Servicios.jsx
+│   │   │   ├── Reportes.jsx
+│   │   │   ├── Usuarios.jsx
+│   │   │   ├── Configuracion.jsx
+│   │   │   └── CamposPersonalizados.jsx  # NUEVO
+│   │   ├── components/
+│   │   │   ├── Layout.jsx
+│   │   │   ├── CustomFieldsRenderer.jsx  # NUEVO - Componente reutilizable
+│   │   │   └── ui/            # Componentes Shadcn/UI
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx
+│   │   ├── lib/
+│   │   │   ├── api.js         # Cliente Axios
+│   │   │   └── utils.js       # Utilidades
+│   │   └── App.js             # Enrutador principal
+│   ├── package.json           # Dependencias Node.js
+│   └── .env                   # Variables de entorno (CREAR)
+└── pdfs/                      # Directorio para reportes generados
+```
+
+### Endpoints API Principales
+
+**Autenticación:**
+- `POST /api/auth/login` - Iniciar sesión
+- `GET /api/auth/me` - Obtener usuario actual
+
+**Empresas:**
+- `GET /api/empresas` - Listar empresas
+- `POST /api/empresas` - Crear empresa
+- `PUT /api/empresas/{id}` - Actualizar empresa
+- `DELETE /api/empresas/{id}` - Eliminar empresa
+
+**Equipos:**
+- `GET /api/equipos` - Listar equipos (filtrable por empresa)
+- `GET /api/equipos/{id}` - Obtener equipo específico
+- `POST /api/equipos` - Crear equipo
+- `PUT /api/equipos/{id}` - Actualizar equipo
+- `DELETE /api/equipos/{id}` - Eliminar equipo
+
+**Bitácoras:**
+- `GET /api/bitacoras` - Listar bitácoras
+- `POST /api/bitacoras` - Crear bitácora
+- `PUT /api/bitacoras/{id}` - Actualizar bitácora
+- `DELETE /api/bitacoras/{id}` - Eliminar bitácora
+- `GET /api/bitacoras/exportar` - Exportar a CSV
+
+**Servicios:**
+- `GET /api/servicios` - Listar servicios
+- `POST /api/servicios` - Crear servicio
+- `PUT /api/servicios/{id}` - Actualizar servicio
+- `DELETE /api/servicios/{id}` - Eliminar servicio
+
+**Reportes:**
+- `GET /api/reportes/empresa/{id}` - Generar reporte de empresa (PDF)
+- `GET /api/reportes/equipo/{id}` - Generar reporte de equipo (PDF)
+- `GET /api/reportes/download/{filename}` - Descargar PDF
+
+**Configuración:**
+- `GET /api/configuracion` - Obtener configuración
+- `PUT /api/configuracion` - Actualizar configuración
+- `POST /api/configuracion/logo` - Subir logo
+
+**🆕 Campos Personalizados:**
+- `GET /api/configuracion/campos/{entity_type}` - Obtener campos de entidad
+- `PUT /api/configuracion/campos/{entity_type}` - Configurar campos de entidad
+  - `entity_type`: `equipos`, `bitacoras`, `empresas`, `servicios`
+
+**Usuarios:**
+- `GET /api/usuarios` - Listar usuarios (solo admin)
+- `POST /api/usuarios` - Crear usuario (solo admin)
+- `PUT /api/usuarios/{id}` - Actualizar usuario (solo admin)
+- `DELETE /api/usuarios/{id}` - Eliminar usuario (solo admin)
+
+**Estadísticas:**
+- `GET /api/estadisticas` - Obtener estadísticas generales del sistema
+
+### Configuración de Producción Recomendada
+
+**Para mejor rendimiento en producción:**
+
+1. **Workers del Backend:**
+   Editar `/etc/systemd/system/itsm-backend.service`:
+   ```ini
+   ExecStart=/opt/itsm/backend/venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000 --workers 4
+   ```
+   Ajustar `--workers` según CPUs disponibles (recomendado: 2x núcleos)
+
+2. **Build de Producción del Frontend:**
+   ```bash
+   cd /opt/itsm/frontend
+   yarn build
+   # O: npm run build
+   
+   # Servir con servidor estático (más eficiente que yarn start)
+   sudo npm install -g serve
+   ```
+   
+   Editar `/etc/systemd/system/itsm-frontend.service`:
+   ```ini
+   ExecStart=/usr/local/bin/serve -s build -l 3000
+   ```
+
+3. **Límites de MongoDB:**
+   Editar `/etc/mongod.conf` para aumentar conexiones:
+   ```yaml
+   net:
+     maxIncomingConnections: 200
+   ```
+
+4. **Nginx Caching (Opcional):**
+   Agregar a la configuración de Nginx para cachear assets estáticos:
+   ```nginx
+   location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+       expires 1y;
+       add_header Cache-Control "public, immutable";
+   }
+   ```
+
+### Seguridad Adicional
+
+**Recomendaciones de Seguridad:**
+
+1. **Cambiar Puerto SSH:**
+   ```bash
+   sudo nano /etc/ssh/sshd_config
+   # Cambiar Port 22 por otro (ej: 2222)
+   sudo systemctl restart sshd
+   ```
+
+2. **Fail2Ban para proteger SSH:**
+   ```bash
+   sudo apt install fail2ban -y
+   sudo systemctl enable fail2ban
+   sudo systemctl start fail2ban
+   ```
+
+3. **Monitoreo de Logs:**
+   Instalar herramientas de monitoreo como `logwatch`:
+   ```bash
+   sudo apt install logwatch -y
+   ```
+
+4. **Actualizaciones Automáticas:**
+   ```bash
+   sudo apt install unattended-upgrades -y
+   sudo dpkg-reconfigure --priority=low unattended-upgrades
+   ```
+
+## 📞 Soporte
+
+### Recursos de Ayuda
+
+- **Documentación de Campos Personalizados:** Ver `/opt/itsm/CAMPOS_PERSONALIZADOS_GUIDE.md`
+- **Logs del Sistema:** Revisar sección "Ver Logs en Tiempo Real" arriba
+- **Problemas Comunes:** Ver sección "Resolución de Problemas"
+
+### Información del Sistema
+
+Para reportar problemas, incluir la siguiente información:
+
+```bash
+# Versión del sistema operativo
+lsb_release -a
+
+# Versión de Python
+python3 --version
+
+# Versión de Node.js
+node --version
+
+# Versión de MongoDB
+mongod --version
+
+# Estado de servicios
+sudo systemctl status itsm-backend itsm-frontend mongod
+
+# Logs recientes
+sudo journalctl -u itsm-backend -n 100
+```
+
+---
+
+**🎉 Fin de la Guía de Instalación**
+
+Para cualquier consulta adicional o asistencia técnica, contacta al administrador del sistema o consulta la documentación en el repositorio del proyecto.
