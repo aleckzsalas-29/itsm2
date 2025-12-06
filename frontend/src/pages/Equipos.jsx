@@ -358,25 +358,6 @@ export default function Equipos() {
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="empresa_id">Empresa *</Label>
-                  <Select
-                    value={formData.empresa_id}
-                    onValueChange={(value) => setFormData({ ...formData, empresa_id: value })}
-                    required
-                  >
-                    <SelectTrigger className="rounded-sm" data-testid="empresa-select">
-                      <SelectValue placeholder="Seleccionar empresa" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {empresas.map((empresa) => (
-                        <SelectItem key={empresa._id} value={empresa._id}>
-                          {empresa.nombre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
                 <div className="space-y-2">
                   <Label htmlFor="nombre">Nombre *</Label>
                   <Input
@@ -429,6 +410,58 @@ export default function Equipos() {
                     className="rounded-sm font-mono"
                   />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="procesador">Procesador</Label>
+                  <Input
+                    id="procesador"
+                    value={formData.procesador}
+                    onChange={(e) => setFormData({ ...formData, procesador: e.target.value })}
+                    className="rounded-sm"
+                    placeholder="Intel Core i7..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="memoria_ram">Memoria RAM</Label>
+                  <Input
+                    id="memoria_ram"
+                    value={formData.memoria_ram}
+                    onChange={(e) => setFormData({ ...formData, memoria_ram: e.target.value })}
+                    className="rounded-sm"
+                    placeholder="16 GB DDR4"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="disco_duro">Disco Duro</Label>
+                  <Input
+                    id="disco_duro"
+                    value={formData.disco_duro}
+                    onChange={(e) => setFormData({ ...formData, disco_duro: e.target.value })}
+                    className="rounded-sm"
+                    placeholder="512 GB SSD"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="espacio_disponible">Espacio Disponible</Label>
+                  <Input
+                    id="espacio_disponible"
+                    value={formData.espacio_disponible}
+                    onChange={(e) => setFormData({ ...formData, espacio_disponible: e.target.value })}
+                    className="rounded-sm"
+                    placeholder="300 GB"
+                  />
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label htmlFor="componentes">Componentes Adicionales</Label>
+                  <Input
+                    id="componentes"
+                    value={formData.componentes}
+                    onChange={(e) => setFormData({ ...formData, componentes: e.target.value })}
+                    className="rounded-sm"
+                    placeholder="GPU, Tarjetas adicionales..."
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="usuario_windows">Usuario Windows</Label>
                   <Input
@@ -495,37 +528,6 @@ export default function Equipos() {
                       <SelectItem value="Mantenimiento">Mantenimiento</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="fecha_compra">Fecha de Compra</Label>
-                  <Input
-                    id="fecha_compra"
-                    type="date"
-                    value={formData.fecha_compra}
-                    onChange={(e) => setFormData({ ...formData, fecha_compra: e.target.value })}
-                    className="rounded-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="garantia_hasta">Garantía Hasta</Label>
-                  <Input
-                    id="garantia_hasta"
-                    type="date"
-                    value={formData.garantia_hasta}
-                    onChange={(e) => setFormData({ ...formData, garantia_hasta: e.target.value })}
-                    className="rounded-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="costo">Costo</Label>
-                  <Input
-                    id="costo"
-                    type="number"
-                    step="0.01"
-                    value={formData.costo}
-                    onChange={(e) => setFormData({ ...formData, costo: e.target.value })}
-                    className="rounded-sm"
-                  />
                 </div>
                 <div className="space-y-2 col-span-2">
                   <Label htmlFor="notas">Notas</Label>
