@@ -562,7 +562,9 @@ async def generate_equipo_report(equipo_id: str, current_user: Dict = Depends(ge
 
 @api_router.get("/reportes/download/{filename}")
 async def download_report(filename: str):
-    filepath = os.path.join("/app/backend/pdfs", filename)
+    # Usar ruta relativa al directorio actual
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(base_dir, "pdfs", filename)
     
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404, detail="Reporte no encontrado")
