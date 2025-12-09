@@ -739,6 +739,23 @@ sudo systemctl status mongod
 
 # Verificar variables de entorno
 cat /opt/itsm/backend/.env
+
+# Verificar permisos del directorio
+ls -la /opt/itsm/backend/
+
+# Si hay error de permisos al crear pdfs/
+mkdir -p /opt/itsm/backend/pdfs
+chmod 755 /opt/itsm/backend/pdfs
+```
+
+**Error común: "Permission denied: '/app'"**
+```bash
+# Esto sucede si el código tiene rutas hardcodeadas
+# Verificar que los archivos usan rutas relativas:
+grep -n "output_dir" /opt/itsm/backend/pdf_service.py
+
+# Debe mostrar: base_dir = os.path.dirname(os.path.abspath(__file__))
+# Si muestra: "/app/backend/pdfs", ver FIX_UBUNTU_SERVER.md
 ```
 
 ### Frontend no carga
