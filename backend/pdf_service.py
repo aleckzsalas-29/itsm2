@@ -174,7 +174,9 @@ Costo Mensual en Servicios: ${costo_servicios:.2f}"""
 
 class PDFService:
     def __init__(self):
-        self.output_dir = "/app/backend/pdfs"
+        # Usar ruta relativa al directorio actual del script
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.output_dir = os.path.join(base_dir, "pdfs")
         os.makedirs(self.output_dir, exist_ok=True)
     
     async def get_config(self, db):
