@@ -179,6 +179,25 @@ export default function Servicios() {
         </Button>
       </div>
 
+      {/* Filtro por Empresa */}
+      <div className="bg-white rounded-sm border border-slate-200 shadow-none p-4">
+        <div className="flex items-center gap-4">
+          <Label htmlFor="empresa-filter" className="min-w-fit font-medium">Filtrar por Empresa:</Label>
+          <Select value={selectedEmpresa} onValueChange={setSelectedEmpresa}>
+            <SelectTrigger className="max-w-sm rounded-sm border-slate-300">
+              <SelectValue placeholder="Selecciona una empresa" />
+            </SelectTrigger>
+            <SelectContent>
+              {empresas.map((empresa) => (
+                <SelectItem key={empresa._id} value={empresa._id}>
+                  {empresa.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <div className="bg-white rounded-sm border border-slate-200 shadow-none overflow-x-auto">
         <Table>
           <TableHeader>
