@@ -602,6 +602,7 @@ export default function Equipos() {
             </DialogFooter>
           </form>
         </DialogContent>
+      </Dialog>
 
       {/* Modal de Historial */}
       <Dialog open={historialOpen} onOpenChange={setHistorialOpen}>
