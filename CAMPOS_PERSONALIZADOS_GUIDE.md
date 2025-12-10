@@ -105,7 +105,7 @@ Para probar:
 
 ```bash
 # Crear campos para bitácoras
-curl -X PUT "https://itsupport.preview.emergentagent.com/api/configuracion/campos/bitacoras" \
+curl -X PUT "https://itsm-toolkit.preview.emergentagent.com/api/configuracion/campos/bitacoras" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '[
