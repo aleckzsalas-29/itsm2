@@ -294,6 +294,48 @@ async def get_equipo(equipo_id: str, show_passwords: bool = False, current_user:
     
     return equipo
 
+@api_router.get("/equipos/{equipo_id}/historial")
+async def get_equipo_historial(equipo_id: str, current_user: Dict = Depends(get_current_user)):
+    """Obtener historial completo de revisiones/bitácoras de un equipo"""
+    
+    # Verificar que el equipo existe
+    equipo = await db.equipos.find_one({"_id": ObjectId(equipo_id)}, {"_id": 0})
+    if not equipo:
+        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    
+    # Obtener todas las bitácoras del equipo
+    historial = []
+    async for bitacora in db.bitacoras.find({"equipo_id": equipo_id}).sort("fecha", -1):
+        # Obtener nombre del técnico
+        tecnico = await db.usuarios.find_one({"_id": ObjectId(bitacora["tecnico_id"])}, {"_id": 0})
+        
+        historial.append({
+            "_id": str(bitacora["_id"]),
+            "fecha": bitacora["fecha"],
+            "tipo": bitacora["tipo"],
+            "descripcion": bitacora["descripcion"],
+            "tecnico": tecnico.get("nombre") if tecnico else "N/A",
+            "estado": bitacora["estado"],
+            "observaciones": bitacora.get("observaciones", ""),
+            "tiempo_estimado": bitacora.get("tiempo_estimado"),
+            "tiempo_real": bitacora.get("tiempo_real"),
+            "limpieza_fisica": bitacora.get("limpieza_fisica", False),
+            "actualizacion_software": bitacora.get("actualizacion_software", False),
+            "revision_hardware": bitacora.get("revision_hardware", False),
+            "respaldo_datos": bitacora.get("respaldo_datos", False),
+            "optimizacion_sistema": bitacora.get("optimizacion_sistema", False),
+            "diagnostico_problema": bitacora.get("diagnostico_problema", ""),
+            "solucion_aplicada": bitacora.get("solucion_aplicada", ""),
+            "componentes_reemplazados": bitacora.get("componentes_reemplazados", ""),
+            "anotaciones_extras": bitacora.get("anotaciones_extras", "")
+        })
+    
+    return {
+        "equipo": equipo.get("nombre"),
+        "total_revisiones": len(historial),
+        "historial": historial
+    }
+
 @api_router.post("/equipos")
 async def create_equipo(request: EquipoCreate, current_user: Dict = Depends(get_current_user)):
     equipo_data = request.model_dump()
