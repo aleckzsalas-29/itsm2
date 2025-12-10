@@ -921,6 +921,96 @@ async def update_custom_fields_config(
     
     return {"message": f"Configuración de campos para {entity_type} actualizada", field_name: campos}
 
+@api_router.get("/configuracion/campos-tipo-equipo/{tipo_equipo}")
+async def get_campos_tipo_equipo(tipo_equipo: str, current_user: Dict = Depends(get_current_user)):
+    """Obtener campos específicos para un tipo de equipo"""
+    
+    # Configuración predefinida de campos por tipo de equipo
+    campos_por_tipo = {
+        "laptop": [
+            {"nombre": "Procesador", "tipo": "texto", "requerido": True},
+            {"nombre": "RAM (GB)", "tipo": "numero", "requerido": True},
+            {"nombre": "Disco Duro", "tipo": "texto", "requerido": True},
+            {"nombre": "Disco Duro Capacidad (GB)", "tipo": "numero", "requerido": False},
+            {"nombre": "Sistema Operativo", "tipo": "texto", "requerido": True},
+            {"nombre": "Tarjeta Gráfica", "tipo": "texto", "requerido": False},
+            {"nombre": "Pantalla (pulgadas)", "tipo": "numero", "requerido": False},
+            {"nombre": "Batería Estado", "tipo": "select", "opciones": ["Excelente", "Buena", "Regular", "Mala"], "requerido": False}
+        ],
+        "desktop": [
+            {"nombre": "Procesador", "tipo": "texto", "requerido": True},
+            {"nombre": "RAM (GB)", "tipo": "numero", "requerido": True},
+            {"nombre": "Disco Duro", "tipo": "texto", "requerido": True},
+            {"nombre": "Disco Duro Capacidad (GB)", "tipo": "numero", "requerido": False},
+            {"nombre": "Sistema Operativo", "tipo": "texto", "requerido": True},
+            {"nombre": "Tarjeta Gráfica", "tipo": "texto", "requerido": False},
+            {"nombre": "Fuente de Poder (W)", "tipo": "numero", "requerido": False},
+            {"nombre": "Gabinete Tipo", "tipo": "texto", "requerido": False}
+        ],
+        "servidor": [
+            {"nombre": "Procesador", "tipo": "texto", "requerido": True},
+            {"nombre": "Núcleos CPU", "tipo": "numero", "requerido": False},
+            {"nombre": "RAM (GB)", "tipo": "numero", "requerido": True},
+            {"nombre": "Discos", "tipo": "texto", "requerido": True},
+            {"nombre": "Configuración RAID", "tipo": "select", "opciones": ["RAID 0", "RAID 1", "RAID 5", "RAID 6", "RAID 10", "Sin RAID"], "requerido": False},
+            {"nombre": "Sistema Operativo", "tipo": "texto", "requerido": True},
+            {"nombre": "Servicios Activos", "tipo": "texto", "requerido": False},
+            {"nombre": "IP Asignada", "tipo": "texto", "requerido": False},
+            {"nombre": "Puerto Administración", "tipo": "texto", "requerido": False}
+        ],
+        "firewall": [
+            {"nombre": "Modelo", "tipo": "texto", "requerido": True},
+            {"nombre": "Firmware", "tipo": "texto", "requerido": True},
+            {"nombre": "Puertos WAN", "tipo": "numero", "requerido": True},
+            {"nombre": "Puertos LAN", "tipo": "numero", "requerido": True},
+            {"nombre": "IP WAN", "tipo": "texto", "requerido": False},
+            {"nombre": "IP LAN", "tipo": "texto", "requerido": False},
+            {"nombre": "VPN Configurado", "tipo": "checkbox", "requerido": False},
+            {"nombre": "Reglas Configuradas", "tipo": "numero", "requerido": False}
+        ],
+        "switch": [
+            {"nombre": "Modelo", "tipo": "texto", "requerido": True},
+            {"nombre": "Puertos Totales", "tipo": "numero", "requerido": True},
+            {"nombre": "Puertos Gigabit", "tipo": "numero", "requerido": False},
+            {"nombre": "Puertos SFP", "tipo": "numero", "requerido": False},
+            {"nombre": "VLANs Configuradas", "tipo": "texto", "requerido": False},
+            {"nombre": "Administrable", "tipo": "checkbox", "requerido": False},
+            {"nombre": "IP Administración", "tipo": "texto", "requerido": False},
+            {"nombre": "PoE", "tipo": "checkbox", "requerido": False}
+        ],
+        "repetidor": [
+            {"nombre": "Modelo", "tipo": "texto", "requerido": True},
+            {"nombre": "Frecuencia", "tipo": "select", "opciones": ["2.4 GHz", "5 GHz", "Dual Band"], "requerido": True},
+            {"nombre": "Velocidad Máxima (Mbps)", "tipo": "numero", "requerido": False},
+            {"nombre": "SSID Principal", "tipo": "texto", "requerido": False},
+            {"nombre": "Rango Cobertura (m)", "tipo": "numero", "requerido": False},
+            {"nombre": "Antenas", "tipo": "numero", "requerido": False}
+        ],
+        "dvr": [
+            {"nombre": "Modelo", "tipo": "texto", "requerido": True},
+            {"nombre": "Canales", "tipo": "numero", "requerido": True},
+            {"nombre": "Capacidad HDD (TB)", "tipo": "numero", "requerido": True},
+            {"nombre": "Resolución Grabación", "tipo": "select", "opciones": ["720p", "1080p", "4K", "5MP"], "requerido": False},
+            {"nombre": "FPS", "tipo": "numero", "requerido": False},
+            {"nombre": "Acceso Remoto", "tipo": "checkbox", "requerido": False},
+            {"nombre": "IP Asignada", "tipo": "texto", "requerido": False}
+        ],
+        "red": [
+            {"nombre": "Tipo", "tipo": "select", "opciones": ["Router", "Access Point", "Modem", "Bridge", "Gateway"], "requerido": True},
+            {"nombre": "Modelo", "tipo": "texto", "requerido": True},
+            {"nombre": "Velocidad", "tipo": "texto", "requerido": False},
+            {"nombre": "Frecuencia", "tipo": "select", "opciones": ["2.4 GHz", "5 GHz", "Dual Band", "N/A"], "requerido": False},
+            {"nombre": "IP Asignada", "tipo": "texto", "requerido": False},
+            {"nombre": "DHCP Activo", "tipo": "checkbox", "requerido": False}
+        ]
+    }
+    
+    tipo_lower = tipo_equipo.lower()
+    if tipo_lower not in campos_por_tipo:
+        return {"campos": []}
+    
+    return {"campos": campos_por_tipo[tipo_lower]}
+
 @api_router.post("/configuracion/logo")
 async def upload_logo(file: bytes = Body(...), current_user: Dict = Depends(get_admin_user)):
     from fastapi import UploadFile, File
