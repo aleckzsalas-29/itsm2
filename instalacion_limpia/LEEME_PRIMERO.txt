@@ -1,0 +1,167 @@
+═══════════════════════════════════════════════════════════
+    SISTEMA ITSM - INSTALACIÓN LIMPIA
+═══════════════════════════════════════════════════════════
+
+📦 CONTENIDO DE ESTE PAQUETE
+
+✓ README.md                    - Información general
+✓ INSTRUCCIONES_COMPLETAS.md   - Guía paso a paso detallada
+✓ instalar.sh                  - Script de instalación automática
+✓ LEEME_PRIMERO.txt           - Este archivo
+
+═══════════════════════════════════════════════════════════
+    MÉTODO 1: INSTALACIÓN RÁPIDA (RECOMENDADO)
+═══════════════════════════════════════════════════════════
+
+Si tienes acceso a TODO el repositorio /app/ desde Emergent:
+
+1. Descarga TODO el repositorio /app/ como ZIP o clónalo
+2. Sube el contenido a tu servidor en /tmp/
+3. Ejecuta:
+
+   cd /tmp/app/instalacion_limpia
+   sudo bash instalar.sh
+
+El script instalará AUTOMÁTICAMENTE:
+- Node.js 20 y Yarn
+- Python 3 y dependencias
+- MongoDB 7.0
+- Código backend y frontend
+- Servicios systemd
+- Usuario administrador
+
+Duración: ~15-20 minutos
+
+═══════════════════════════════════════════════════════════
+    MÉTODO 2: DESDE LA PLATAFORMA EMERGENT
+═══════════════════════════════════════════════════════════
+
+Si estás usando la plataforma Emergent:
+
+1. Ve a la sección "Deploy" o "Deployment"
+2. Conecta tu servidor Ubuntu
+3. Haz clic en "Deploy to Server"
+4. Emergent se encargará de todo automáticamente
+
+═══════════════════════════════════════════════════════════
+    MÉTODO 3: INSTALACIÓN MANUAL
+═══════════════════════════════════════════════════════════
+
+Si prefieres instalar manualmente:
+
+1. Lee el archivo INSTRUCCIONES_COMPLETAS.md
+2. Sigue cada paso en orden
+3. Configura los servicios systemd manualmente
+
+═══════════════════════════════════════════════════════════
+    DESCARGA DEL CÓDIGO COMPLETO
+═══════════════════════════════════════════════════════════
+
+El código fuente completo está en el directorio /app/ de
+este proyecto en Emergent.
+
+ESTRUCTURA:
+/app/
+├── backend/           ← Código del servidor FastAPI
+├── frontend/          ← Código de la aplicación React
+├── instalacion_limpia/ ← Scripts e instrucciones (aquí estás)
+└── [otros archivos]
+
+OPCIONES PARA DESCARGAR:
+
+A) Desde Emergent:
+   - Busca el botón "Download" o "Export Project"
+   - Descarga todo el directorio /app/
+
+B) Si tienes Git configurado:
+   - Usa "Save to GitHub" en Emergent
+   - Luego clona el repo en tu servidor:
+     git clone https://github.com/tu-usuario/itsm.git
+
+C) Transferencia directa:
+   - Comprime /app/ en un ZIP
+   - Descarga el ZIP
+   - Sube a tu servidor:
+     scp itsm.zip root@tu-servidor:/tmp/
+
+═══════════════════════════════════════════════════════════
+    ACCESO POST-INSTALACIÓN
+═══════════════════════════════════════════════════════════
+
+Una vez instalado:
+
+URL:      http://tu-servidor-ip:3000
+Email:    admin@itsm.com
+Password: admin123
+
+⚠️ IMPORTANTE: Cambia la contraseña después del primer login
+
+═══════════════════════════════════════════════════════════
+    FUNCIONALIDADES INCLUIDAS
+═══════════════════════════════════════════════════════════
+
+✨ Ver Historial de Mantenimiento de Equipos
+   - Botón azul con icono de reloj en cada equipo
+   - Modal con registro completo de mantenimientos
+
+✨ Campos Dinámicos por Tipo de Equipo
+   - Campos específicos según tipo seleccionado
+   - Se configuran automáticamente
+
+✨ Gestión Completa de:
+   - Empresas y clientes
+   - Equipos y su historial
+   - Bitácoras de mantenimiento
+   - Servicios
+   - Usuarios y roles
+
+✨ Reportes PDF
+✨ Envío de emails (con SendGrid)
+✨ Sistema de autenticación robusto
+
+═══════════════════════════════════════════════════════════
+    REQUISITOS DEL SERVIDOR
+═══════════════════════════════════════════════════════════
+
+Sistema Operativo: Ubuntu 20.04 o superior
+CPU:               2 cores mínimo
+RAM:               2 GB mínimo
+Disco:             10 GB disponibles
+Puertos:           3000 (frontend), 8001 (backend), 27017 (MongoDB)
+
+═══════════════════════════════════════════════════════════
+    SOLUCIÓN RÁPIDA DE PROBLEMAS
+═══════════════════════════════════════════════════════════
+
+Problema: No puedo descargar el código
+Solución: Pide ayuda al soporte de Emergent para exportar
+          el proyecto o usa la opción "Save to GitHub"
+
+Problema: El script instalar.sh falla
+Solución: Revisa los logs con:
+          sudo journalctl -u itsm-backend -n 100
+          sudo journalctl -u itsm-frontend -n 100
+
+Problema: No puedo acceder desde fuera del servidor
+Solución: Abre los puertos en el firewall:
+          sudo ufw allow 3000/tcp
+          sudo ufw allow 8001/tcp
+
+═══════════════════════════════════════════════════════════
+    PRÓXIMOS PASOS
+═══════════════════════════════════════════════════════════
+
+1. Descarga TODO el código de /app/ desde Emergent
+2. Sube a tu servidor
+3. Ejecuta: sudo bash instalar.sh
+4. Accede a: http://tu-servidor:3000
+5. Login: admin@itsm.com / admin123
+6. ¡Comienza a usar el sistema!
+
+═══════════════════════════════════════════════════════════
+
+Para más información, consulta INSTRUCCIONES_COMPLETAS.md
+
+¡Buena suerte con tu instalación!
+
+═══════════════════════════════════════════════════════════
