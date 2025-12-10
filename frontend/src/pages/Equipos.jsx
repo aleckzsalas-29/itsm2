@@ -7,7 +7,7 @@ import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Plus, Edit, Trash2, Monitor, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Monitor, Eye, EyeOff, Loader2, History } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import CustomFieldsRenderer from '../components/CustomFieldsRenderer';
@@ -20,6 +20,10 @@ export default function Equipos() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEquipo, setEditingEquipo] = useState(null);
   const [showPasswords, setShowPasswords] = useState({});
+  const [historialOpen, setHistorialOpen] = useState(false);
+  const [historialData, setHistorialData] = useState([]);
+  const [loadingHistorial, setLoadingHistorial] = useState(false);
+  const [selectedEquipoNombre, setSelectedEquipoNombre] = useState('');
   const [customFields, setCustomFields] = useState([]);
   const [formData, setFormData] = useState({
     empresa_id: '',
@@ -107,6 +111,23 @@ export default function Equipos() {
       });
     } catch (error) {
       toast.error('Error al obtener contraseñas');
+    }
+  };
+
+  const fetchHistorial = async (equipoId, equipoNombre) => {
+    setLoadingHistorial(true);
+    setHistorialOpen(true);
+    setSelectedEquipoNombre(equipoNombre);
+    
+    try {
+      const response = await api.get(`/bitacoras?equipo_id=${equipoId}`);
+      setHistorialData(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Error loading historial:', error);
+      toast.error('Error al cargar el historial');
+      setHistorialData([]);
+    } finally {
+      setLoadingHistorial(false);
     }
   };
 
@@ -329,6 +350,15 @@ export default function Equipos() {
                     )}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => fetchHistorial(equipo._id, equipo.nombre)}
+                      className="text-blue-600 hover:text-blue-700"
+                      title="Ver Historial"
+                    >
+                      <History className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -571,6 +601,80 @@ export default function Equipos() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+
+      {/* Modal de Historial */}
+      <Dialog open={historialOpen} onOpenChange={setHistorialOpen}>
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto border border-slate-200">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-slate-900" style={{ fontFamily: 'Manrope, sans-serif' }}>
+              Historial de Mantenimientos - {selectedEquipoNombre}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            {loadingHistorial ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+              </div>
+            ) : historialData.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                <p>No hay registros de mantenimiento para este equipo</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {historialData.map((bitacora) => (
+                  <div key={bitacora._id} className="border border-slate-200 rounded-lg p-4 hover:bg-slate-50">
+                    <div className="grid grid-cols-2 gap-4 mb-3">
+                      <div>
+                        <span className="text-sm font-semibold text-slate-700">Fecha:</span>
+                        <p className="text-slate-900">
+                          {bitacora.fecha ? format(new Date(bitacora.fecha), 'dd/MM/yyyy HH:mm') : 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-semibold text-slate-700">Técnico:</span>
+                        <p className="text-slate-900">{bitacora.tecnico || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-semibold text-slate-700">Tipo:</span>
+                        <p className="text-slate-900">{bitacora.tipo_servicio || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-semibold text-slate-700">Estado:</span>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          bitacora.estado === 'Completado' ? 'bg-green-100 text-green-800' :
+                          bitacora.estado === 'Pendiente' ? 'bg-amber-100 text-amber-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {bitacora.estado || 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="border-t border-slate-200 pt-3">
+                      <span className="text-sm font-semibold text-slate-700">Descripción:</span>
+                      <p className="text-slate-900 mt-1 whitespace-pre-wrap">{bitacora.descripcion || 'Sin descripción'}</p>
+                    </div>
+                    {bitacora.observaciones && (
+                      <div className="border-t border-slate-200 pt-3 mt-3">
+                        <span className="text-sm font-semibold text-slate-700">Observaciones:</span>
+                        <p className="text-slate-600 mt-1 whitespace-pre-wrap">{bitacora.observaciones}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setHistorialOpen(false)}
+              className="rounded-sm"
+            >
+              Cerrar
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
