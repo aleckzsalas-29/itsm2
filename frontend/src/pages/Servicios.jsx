@@ -104,7 +104,7 @@ export default function Servicios() {
       }
       setDialogOpen(false);
       resetForm();
-      fetchData();
+      fetchServicios();
     } catch (error) {
       toast.error(getErrorMessage(error, 'Error al guardar servicio'));
     }
@@ -115,7 +115,7 @@ export default function Servicios() {
       try {
         await api.delete(`/servicios/${id}`);
         toast.success('Servicio eliminado exitosamente');
-        fetchData();
+        fetchServicios();
       } catch (error) {
         toast.error('Error al eliminar servicio');
       }
