@@ -486,4 +486,49 @@ Estado: {equipo.get('estado', '')}"""
         
         return filename
 
+def generate_bitacoras_report_detailed(self, bitacoras, empresa_nombre=None, logo_path=None, sistema_nombre="Sistema ITSM"):
+        """Generar reporte PDF detallado de bitácoras"""
+        titulo = f"Reporte Detallado de Bitácoras"
+        if empresa_nombre:
+            titulo += f" - {empresa_nombre}"
+        
+        pdf = ITSMReportPDF(titulo=titulo, logo_path=logo_path, sistema_nombre=sistema_nombre)
+        pdf.add_page()
+        
+        if not bitacoras:
+            pdf.set_font("helvetica", "I", 10)
+            pdf.cell(0, 10, "No hay bitácoras para mostrar", 0, 1, "C")
+        else:
+            pdf.set_font("helvetica", "B", 12)
+            pdf.cell(0, 8, f"Total: {len(bitacoras)}", 0, 1)
+            pdf.ln(5)
+            
+            for idx, b in enumerate(bitacoras, 1):
+                pdf.set_fill_color(30, 41, 59)
+                pdf.set_text_color(255, 255, 255)
+                pdf.set_font("helvetica", "B", 10)
+                pdf.cell(0, 8, f"Bitácora #{idx}", 0, 1, "L", True)
+                pdf.ln(2)
+                
+                pdf.set_text_color(51, 65, 85)
+                pdf.set_font("helvetica", "B", 9)
+                pdf.cell(40, 6, "Equipo:", 0, 0)
+                pdf.set_font("helvetica", "", 9)
+                pdf.cell(0, 6, b.get('equipo', 'N/A'), 0, 1)
+                
+                pdf.set_font("helvetica", "B", 9)
+                pdf.cell(40, 6, "Descripción:", 0, 1)
+                pdf.set_font("helvetica", "", 8)
+                pdf.multi_cell(0, 5, b.get('descripcion', 'N/A'))
+                
+                if idx < len(bitacoras):
+                    pdf.ln(3)
+                    if pdf.get_y() > 240:
+                        pdf.add_page()
+        
+        filename = f"bitacoras_detallado_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        filepath = os.path.join(self.output_dir, filename)
+        pdf.output(filepath)
+        return filename
+
 pdf_service = PDFService()

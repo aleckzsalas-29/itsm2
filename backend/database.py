@@ -2,6 +2,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 from dotenv import load_dotenv
 
+# Cargar variables de entorno desde .env
 load_dotenv()
 
 mongo_url = os.environ['MONGO_URL']

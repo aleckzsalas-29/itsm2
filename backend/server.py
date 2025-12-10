@@ -1054,6 +1054,153 @@ async def get_estadisticas(current_user: Dict = Depends(get_current_user)):
 @api_router.get("/")
 async def root():
     return {"message": "Sistema ITSM API"}
+# ============ NUEVOS ENDPOINTS - AGREGAR AQUÍ ============
+
+@api_router.get("/equipos/{equipo_id}/historial")
+async def get_equipo_historial(equipo_id: str, current_user: Dict = Depends(get_current_user)):
+    """Obtener historial completo de revisiones/bitácoras de un equipo"""
+    equipo = await db.equipos.find_one({"_id": ObjectId(equipo_id)}, {"_id": 0})
+    if not equipo:
+        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    
+    historial = []
+    async for bitacora in db.bitacoras.find({"equipo_id": equipo_id}).sort("fecha", -1):
+        tecnico = await db.usuarios.find_one({"_id": ObjectId(bitacora["tecnico_id"])}, {"_id": 0})
+        historial.append({
+            "_id": str(bitacora["_id"]),
+            "fecha": bitacora["fecha"],
+            "tipo": bitacora["tipo"],
+            "descripcion": bitacora["descripcion"],
+            "tecnico": tecnico.get("nombre") if tecnico else "N/A",
+            "estado": bitacora["estado"],
+            "observaciones": bitacora.get("observaciones", ""),
+            "tiempo_estimado": bitacora.get("tiempo_estimado"),
+            "tiempo_real": bitacora.get("tiempo_real"),
+            "limpieza_fisica": bitacora.get("limpieza_fisica", False),
+            "actualizacion_software": bitacora.get("actualizacion_software", False),
+            "revision_hardware": bitacora.get("revision_hardware", False),
+            "respaldo_datos": bitacora.get("respaldo_datos", False),
+            "optimizacion_sistema": bitacora.get("optimizacion_sistema", False),
+            "diagnostico_problema": bitacora.get("diagnostico_problema", ""),
+            "solucion_aplicada": bitacora.get("solucion_aplicada", ""),
+            "componentes_reemplazados": bitacora.get("componentes_reemplazados", ""),
+            "anotaciones_extras": bitacora.get("anotaciones_extras", "")
+        })
+    
+    return {"equipo": equipo.get("nombre"), "total_revisiones": len(historial), "historial": historial}
+
+@api_router.get("/bitacoras/exportar-pdf-detallado")
+async def exportar_bitacoras_pdf_detallado(
+    empresa_id: str,
+    periodo: str = "mes",
+    fecha_inicio: Optional[str] = None,
+    current_user: Dict = Depends(get_current_user)
+):
+    """Exportar bitácoras a PDF detallado con TODO el contenido"""
+    from datetime import timedelta
+    
+    fecha_fin = datetime.utcnow()
+    if periodo == "dia":
+        fecha_inicio_dt = fecha_fin - timedelta(days=1)
+    elif periodo == "semana":
+        fecha_inicio_dt = fecha_fin - timedelta(weeks=1)
+    elif periodo == "mes":
+        fecha_inicio_dt = fecha_fin - timedelta(days=30)
+    else:
+        if fecha_inicio:
+            fecha_inicio_dt = datetime.fromisoformat(fecha_inicio)
+        else:
+            fecha_inicio_dt = datetime.utcnow() - timedelta(days=30)
+    
+    empresa = await db.empresas.find_one({"_id": ObjectId(empresa_id)})
+    if not empresa:
+        raise HTTPException(status_code=404, detail="Empresa no encontrada")
+    
+    query = {"empresa_id": empresa_id, "fecha": {"$gte": fecha_inicio_dt, "$lte": fecha_fin}}
+    
+    bitacoras = []
+    async for bitacora in db.bitacoras.find(query).sort("fecha", -1):
+        equipo = await db.equipos.find_one({"_id": ObjectId(bitacora["equipo_id"])}, {"_id": 0})
+        tecnico = await db.usuarios.find_one({"_id": ObjectId(bitacora["tecnico_id"])}, {"_id": 0})
+        
+        bitacoras.append({
+            "fecha": bitacora["fecha"],
+            "equipo": equipo.get("nombre") if equipo else "N/A",
+            "tipo": bitacora["tipo"],
+            "descripcion": bitacora["descripcion"],
+            "tecnico": tecnico.get("nombre") if tecnico else "N/A",
+            "estado": bitacora["estado"],
+            "observaciones": bitacora.get("observaciones", ""),
+            "tiempo_estimado": bitacora.get("tiempo_estimado"),
+            "tiempo_real": bitacora.get("tiempo_real"),
+            "limpieza_fisica": bitacora.get("limpieza_fisica", False),
+            "actualizacion_software": bitacora.get("actualizacion_software", False),
+            "revision_hardware": bitacora.get("revision_hardware", False),
+            "respaldo_datos": bitacora.get("respaldo_datos", False),
+            "optimizacion_sistema": bitacora.get("optimizacion_sistema", False),
+            "diagnostico_problema": bitacora.get("diagnostico_problema", ""),
+            "solucion_aplicada": bitacora.get("solucion_aplicada", ""),
+            "componentes_reemplazados": bitacora.get("componentes_reemplazados", ""),
+            "anotaciones_extras": bitacora.get("anotaciones_extras", "")
+        })
+    
+    try:
+        config = await db.configuracion.find_one({})
+        logo_path = None
+        sistema_nombre = "Sistema ITSM"
+        
+        if config:
+            sistema_nombre = config.get("nombre_sistema", "Sistema ITSM")
+            if config.get("logo_url") and config["logo_url"].startswith("data:image"):
+                import base64
+                logo_data = config["logo_url"].split(",")[1]
+                logo_bytes = base64.b64decode(logo_data)
+                logo_path = "/tmp/logo_temp.png"
+                with open(logo_path, "wb") as f:
+                    f.write(logo_bytes)
+        
+        filename = pdf_service.generate_bitacoras_report_detailed(
+            bitacoras, 
+            empresa.get("nombre"),
+            logo_path,
+            sistema_nombre
+        )
+        
+        return {"filename": filename, "message": "Reporte PDF detallado generado exitosamente"}
+    except Exception as e:
+        logger.error(f"Error generating detailed bitacoras PDF: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error al generar reporte: {str(e)}")
+
+@api_router.get("/configuracion/campos-tipo-equipo/{tipo_equipo}")
+async def get_campos_tipo_equipo(tipo_equipo: str, current_user: Dict = Depends(get_current_user)):
+    """Obtener campos específicos para un tipo de equipo"""
+    
+    campos_por_tipo = {
+        "laptop": [
+            {"nombre": "Procesador", "tipo": "texto", "requerido": True},
+            {"nombre": "RAM (GB)", "tipo": "numero", "requerido": True},
+            {"nombre": "Disco Duro", "tipo": "texto", "requerido": True},
+            {"nombre": "Sistema Operativo", "tipo": "texto", "requerido": True},
+        ],
+        "desktop": [
+            {"nombre": "Procesador", "tipo": "texto", "requerido": True},
+            {"nombre": "RAM (GB)", "tipo": "numero", "requerido": True},
+            {"nombre": "Disco Duro", "tipo": "texto", "requerido": True},
+            {"nombre": "Sistema Operativo", "tipo": "texto", "requerido": True},
+        ],
+        "servidor": [
+            {"nombre": "Procesador", "tipo": "texto", "requerido": True},
+            {"nombre": "RAM (GB)", "tipo": "numero", "requerido": True},
+            {"nombre": "Discos", "tipo": "texto", "requerido": True},
+            {"nombre": "Sistema Operativo", "tipo": "texto", "requerido": True},
+        ]
+    }
+    
+    tipo_lower = tipo_equipo.lower()
+    if tipo_lower not in campos_por_tipo:
+        return {"campos": []}
+    
+    return {"campos": campos_por_tipo[tipo_lower]}
 
 app.include_router(api_router)
 
