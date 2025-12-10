@@ -259,16 +259,31 @@ export default function Bitacoras() {
           </div>
           <div>
             <Label className="text-sm font-medium text-slate-700 mb-2 block">Exportar Bitácoras</Label>
-            <div className="flex gap-2">
-              <Button onClick={() => handleExport('dia')} variant="outline" size="sm" className="rounded-sm">
-                <Download className="mr-2 h-4 w-4" /> Día
-              </Button>
-              <Button onClick={() => handleExport('semana')} variant="outline" size="sm" className="rounded-sm">
-                <Download className="mr-2 h-4 w-4" /> Semana
-              </Button>
-              <Button onClick={() => handleExport('mes')} variant="outline" size="sm" className="rounded-sm">
-                <Download className="mr-2 h-4 w-4" /> Mes
-              </Button>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <span className="text-xs text-slate-600 font-medium">CSV:</span>
+                <Button onClick={() => handleExport('dia')} variant="outline" size="sm" className="rounded-sm">
+                  <Download className="mr-1 h-3 w-3" /> Día
+                </Button>
+                <Button onClick={() => handleExport('semana')} variant="outline" size="sm" className="rounded-sm">
+                  <Download className="mr-1 h-3 w-3" /> Semana
+                </Button>
+                <Button onClick={() => handleExport('mes')} variant="outline" size="sm" className="rounded-sm">
+                  <Download className="mr-1 h-3 w-3" /> Mes
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-xs text-slate-600 font-medium">PDF:</span>
+                <Button onClick={() => handleExportPDF('dia')} variant="outline" size="sm" className="rounded-sm bg-red-50 hover:bg-red-100">
+                  <Download className="mr-1 h-3 w-3" /> Día
+                </Button>
+                <Button onClick={() => handleExportPDF('semana')} variant="outline" size="sm" className="rounded-sm bg-red-50 hover:bg-red-100">
+                  <Download className="mr-1 h-3 w-3" /> Semana
+                </Button>
+                <Button onClick={() => handleExportPDF('mes')} variant="outline" size="sm" className="rounded-sm bg-red-50 hover:bg-red-100">
+                  <Download className="mr-1 h-3 w-3" /> Mes
+                </Button>
+              </div>
             </div>
           </div>
         </div>
