@@ -105,9 +105,28 @@ export default function Bitacoras() {
       link.click();
       link.remove();
       
-      toast.success('Bitácoras exportadas exitosamente');
+      toast.success('Bitácoras exportadas a CSV exitosamente');
     } catch (error) {
       toast.error('Error al exportar bitácoras');
+    }
+  };
+
+  const handleExportPDF = async (periodo) => {
+    if (!selectedEmpresa) {
+      toast.error('Selecciona una empresa primero');
+      return;
+    }
+
+    try {
+      const response = await api.get(`/bitacoras/exportar-pdf?empresa_id=${selectedEmpresa}&periodo=${periodo}`);
+      
+      if (response.data.filename) {
+        const downloadUrl = `${api.defaults.baseURL}/reportes/download/${response.data.filename}`;
+        window.open(downloadUrl, '_blank');
+        toast.success('Reporte PDF generado exitosamente');
+      }
+    } catch (error) {
+      toast.error(getErrorMessage(error, 'Error al generar PDF'));
     }
   };
 
