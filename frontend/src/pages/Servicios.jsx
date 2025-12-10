@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 export default function Servicios() {
   const [servicios, setServicios] = useState([]);
   const [empresas, setEmpresas] = useState([]);
+  const [selectedEmpresa, setSelectedEmpresa] = useState('');
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingServicio, setEditingServicio] = useState(null);
@@ -33,19 +34,36 @@ export default function Servicios() {
   });
 
   useEffect(() => {
-    fetchData();
+    fetchEmpresas();
   }, []);
 
-  const fetchData = async () => {
+  useEffect(() => {
+    if (selectedEmpresa) {
+      fetchServicios();
+    }
+  }, [selectedEmpresa]);
+
+  const fetchEmpresas = async () => {
     try {
-      const [serviciosRes, empresasRes] = await Promise.all([
-        api.get('/servicios'),
-        api.get('/empresas')
-      ]);
-      setServicios(serviciosRes.data);
-      setEmpresas(empresasRes.data);
+      const response = await api.get('/empresas');
+      setEmpresas(response.data);
+      if (response.data.length > 0) {
+        setSelectedEmpresa(response.data[0]._id);
+      }
     } catch (error) {
-      toast.error('Error al cargar datos');
+      toast.error('Error al cargar empresas');
+    }
+  };
+
+  const fetchServicios = async () => {
+    if (!selectedEmpresa) return;
+    
+    setLoading(true);
+    try {
+      const response = await api.get(`/servicios?empresa_id=${selectedEmpresa}`);
+      setServicios(response.data);
+    } catch (error) {
+      toast.error('Error al cargar servicios');
     } finally {
       setLoading(false);
     }
