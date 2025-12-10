@@ -320,5 +320,170 @@ Estado: {equipo.get('estado', '')}"""
         pdf.output(filepath)
         
         return filename
+    
+    def generate_bitacoras_report_detailed(self, bitacoras: List[Dict], empresa_nombre: str = None, 
+                                           logo_path: str = None, sistema_nombre: str = "Sistema ITSM"):
+        """Generar reporte PDF detallado de bitácoras con todo el contenido"""
+        
+        titulo = f"Reporte Detallado de Bitácoras"
+        if empresa_nombre:
+            titulo += f" - {empresa_nombre}"
+        
+        pdf = ITSMReportPDF(titulo=titulo, logo_path=logo_path, sistema_nombre=sistema_nombre)
+        pdf.add_page()
+        
+        if not bitacoras:
+            pdf.set_font("helvetica", "I", 10)
+            pdf.cell(0, 10, "No hay bitácoras para mostrar", 0, 1, "C")
+        else:
+            # Título de sección
+            pdf.set_font("helvetica", "B", 12)
+            pdf.set_text_color(15, 23, 42)
+            pdf.cell(0, 8, f"Total de Bitácoras: {len(bitacoras)}", 0, 1)
+            pdf.ln(5)
+            
+            # Procesar cada bitácora detalladamente
+            for idx, bitacora in enumerate(bitacoras, 1):
+                # Encabezado de bitácora
+                pdf.set_fill_color(30, 41, 59)
+                pdf.set_text_color(255, 255, 255)
+                pdf.set_font("helvetica", "B", 10)
+                pdf.cell(0, 8, f"Bitácora #{idx}", 0, 1, "L", True)
+                pdf.ln(2)
+                
+                # Información básica
+                pdf.set_text_color(51, 65, 85)
+                pdf.set_font("helvetica", "B", 9)
+                
+                # Fecha
+                fecha_str = "N/A"
+                if bitacora.get('fecha'):
+                    try:
+                        if isinstance(bitacora['fecha'], str):
+                            dt = datetime.fromisoformat(bitacora['fecha'].replace('Z', '+00:00'))
+                        else:
+                            dt = bitacora['fecha']
+                        fecha_str = dt.strftime('%d/%m/%Y %H:%M')
+                    except:
+                        fecha_str = str(bitacora['fecha'])
+                
+                pdf.cell(40, 6, "Fecha:", 0, 0)
+                pdf.set_font("helvetica", "", 9)
+                pdf.cell(0, 6, fecha_str, 0, 1)
+                
+                pdf.set_font("helvetica", "B", 9)
+                pdf.cell(40, 6, "Equipo:", 0, 0)
+                pdf.set_font("helvetica", "", 9)
+                pdf.cell(0, 6, bitacora.get('equipo', 'N/A'), 0, 1)
+                
+                pdf.set_font("helvetica", "B", 9)
+                pdf.cell(40, 6, "Tipo:", 0, 0)
+                pdf.set_font("helvetica", "", 9)
+                pdf.cell(0, 6, bitacora.get('tipo', 'N/A'), 0, 1)
+                
+                pdf.set_font("helvetica", "B", 9)
+                pdf.cell(40, 6, "Técnico:", 0, 0)
+                pdf.set_font("helvetica", "", 9)
+                pdf.cell(0, 6, bitacora.get('tecnico', 'N/A'), 0, 1)
+                
+                pdf.set_font("helvetica", "B", 9)
+                pdf.cell(40, 6, "Estado:", 0, 0)
+                pdf.set_font("helvetica", "", 9)
+                pdf.cell(0, 6, bitacora.get('estado', 'N/A'), 0, 1)
+                
+                # Tiempos
+                tiempo_est = bitacora.get('tiempo_estimado')
+                tiempo_real = bitacora.get('tiempo_real')
+                if tiempo_est or tiempo_real:
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(40, 6, "Tiempo Estimado:", 0, 0)
+                    pdf.set_font("helvetica", "", 9)
+                    pdf.cell(60, 6, f"{tiempo_est} min" if tiempo_est else "N/A", 0, 0)
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(40, 6, "Tiempo Real:", 0, 0)
+                    pdf.set_font("helvetica", "", 9)
+                    pdf.cell(0, 6, f"{tiempo_real} min" if tiempo_real else "N/A", 0, 1)
+                
+                pdf.ln(3)
+                
+                # Descripción
+                pdf.set_font("helvetica", "B", 9)
+                pdf.cell(0, 6, "Descripción:", 0, 1)
+                pdf.set_font("helvetica", "", 8)
+                descripcion = bitacora.get('descripcion', 'N/A')
+                pdf.multi_cell(0, 5, descripcion)
+                pdf.ln(2)
+                
+                # Mantenimiento Preventivo
+                preventivo_items = []
+                if bitacora.get('limpieza_fisica'): preventivo_items.append("Limpieza física")
+                if bitacora.get('actualizacion_software'): preventivo_items.append("Actualización de software")
+                if bitacora.get('revision_hardware'): preventivo_items.append("Revisión de hardware")
+                if bitacora.get('respaldo_datos'): preventivo_items.append("Respaldo de datos")
+                if bitacora.get('optimizacion_sistema'): preventivo_items.append("Optimización del sistema")
+                
+                if preventivo_items:
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(0, 6, "Mantenimiento Preventivo:", 0, 1)
+                    pdf.set_font("helvetica", "", 8)
+                    for item in preventivo_items:
+                        pdf.cell(10, 5, "", 0, 0)
+                        pdf.cell(0, 5, f"• {item}", 0, 1)
+                    pdf.ln(2)
+                
+                # Mantenimiento Correctivo
+                if bitacora.get('diagnostico_problema'):
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(0, 6, "Diagnóstico del Problema:", 0, 1)
+                    pdf.set_font("helvetica", "", 8)
+                    pdf.multi_cell(0, 5, bitacora['diagnostico_problema'])
+                    pdf.ln(2)
+                
+                if bitacora.get('solucion_aplicada'):
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(0, 6, "Solución Aplicada:", 0, 1)
+                    pdf.set_font("helvetica", "", 8)
+                    pdf.multi_cell(0, 5, bitacora['solucion_aplicada'])
+                    pdf.ln(2)
+                
+                if bitacora.get('componentes_reemplazados'):
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(0, 6, "Componentes Reemplazados:", 0, 1)
+                    pdf.set_font("helvetica", "", 8)
+                    pdf.multi_cell(0, 5, bitacora['componentes_reemplazados'])
+                    pdf.ln(2)
+                
+                # Observaciones
+                if bitacora.get('observaciones'):
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(0, 6, "Observaciones:", 0, 1)
+                    pdf.set_font("helvetica", "", 8)
+                    pdf.multi_cell(0, 5, bitacora['observaciones'])
+                    pdf.ln(2)
+                
+                # Anotaciones extras
+                if bitacora.get('anotaciones_extras'):
+                    pdf.set_font("helvetica", "B", 9)
+                    pdf.cell(0, 6, "Anotaciones Adicionales:", 0, 1)
+                    pdf.set_font("helvetica", "", 8)
+                    pdf.multi_cell(0, 5, bitacora['anotaciones_extras'])
+                    pdf.ln(2)
+                
+                # Separador entre bitácoras
+                if idx < len(bitacoras):
+                    pdf.ln(3)
+                    pdf.set_draw_color(203, 213, 225)
+                    pdf.line(pdf.MARGIN, pdf.get_y(), pdf.PAGE_WIDTH - pdf.MARGIN, pdf.get_y())
+                    pdf.ln(5)
+                
+                # Verificar espacio para nueva bitácora
+                if idx < len(bitacoras) and pdf.get_y() > 240:
+                    pdf.add_page()
+        
+        filename = f"bitacoras_detallado_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        filepath = os.path.join(self.output_dir, filename)
+        pdf.output(filepath)
+        
+        return filename
 
 pdf_service = PDFService()
