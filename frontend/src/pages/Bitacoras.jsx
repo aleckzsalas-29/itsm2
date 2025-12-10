@@ -8,7 +8,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Plus, Edit, Trash2, ClipboardList, Loader2, Download } from 'lucide-react';
+import { Plus, Edit, Trash2, Monitor, Eye, EyeOff, Loader2, History } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
@@ -118,15 +118,15 @@ export default function Bitacoras() {
     }
 
     try {
-      const response = await api.get(`/bitacoras/exportar-pdf?empresa_id=${selectedEmpresa}&periodo=${periodo}`);
+      const response = await api.get(`/bitacoras/exportar-pdf-detallado?empresa_id=${selectedEmpresa}&periodo=${periodo}`);
       
       if (response.data.filename) {
         const downloadUrl = `${api.defaults.baseURL}/reportes/download/${response.data.filename}`;
         window.open(downloadUrl, '_blank');
-        toast.success('Reporte PDF generado exitosamente');
+        toast.success('Reporte PDF detallado generado exitosamente');
       }
     } catch (error) {
-      toast.error(getErrorMessage(error, 'Error al generar PDF'));
+      toast.error(getErrorMessage(error, 'Error al generar PDF detallado'));
     }
   };
 
@@ -155,6 +155,23 @@ export default function Bitacoras() {
   };
 
   const handleDelete = async (id) => {
+ const [historialOpen, setHistorialOpen] = useState(false);
+  const [historialData, setHistorialData] = useState(null);
+  const [loadingHistorial, setLoadingHistorial] = useState(false);
+
+  const handleVerHistorial = async (equipoId) => {
+    setLoadingHistorial(true);
+    setHistorialOpen(true);
+    try {
+      const response = await api.get(`/equipos/${equipoId}/historial`);
+      setHistorialData(response.data);
+    } catch (error) {
+      toast.error('Error al cargar historial');
+      setHistorialData(null);
+    } finally {
+      setLoadingHistorial(false);
+    }
+  };
     if (window.confirm('¿Está seguro de eliminar esta bitácora?')) {
       try {
         await api.delete(`/bitacoras/${id}`);
@@ -273,7 +290,7 @@ export default function Bitacoras() {
                 </Button>
               </div>
               <div className="flex gap-2">
-                <span className="text-xs text-slate-600 font-medium">PDF:</span>
+                <span className="text-xs text-slate-600 font-medium">PDF Resumen:</span>
                 <Button onClick={() => handleExportPDF('dia')} variant="outline" size="sm" className="rounded-sm bg-red-50 hover:bg-red-100">
                   <Download className="mr-1 h-3 w-3" /> Día
                 </Button>
@@ -281,6 +298,18 @@ export default function Bitacoras() {
                   <Download className="mr-1 h-3 w-3" /> Semana
                 </Button>
                 <Button onClick={() => handleExportPDF('mes')} variant="outline" size="sm" className="rounded-sm bg-red-50 hover:bg-red-100">
+                  <Download className="mr-1 h-3 w-3" /> Mes
+                </Button>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-xs text-slate-600 font-medium">PDF Detallado:</span>
+                <Button onClick={() => handleExportPDFDetallado('dia')} variant="outline" size="sm" className="rounded-sm bg-green-50 hover:bg-green-100">
+                  <Download className="mr-1 h-3 w-3" /> Día
+                </Button>
+                <Button onClick={() => handleExportPDFDetallado('semana')} variant="outline" size="sm" className="rounded-sm bg-green-50 hover:bg-green-100">
+                  <Download className="mr-1 h-3 w-3" /> Semana
+                </Button>
+                <Button onClick={() => handleExportPDFDetallado('mes')} variant="outline" size="sm" className="rounded-sm bg-green-50 hover:bg-green-100">
                   <Download className="mr-1 h-3 w-3" /> Mes
                 </Button>
               </div>
@@ -353,14 +382,14 @@ export default function Bitacoras() {
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(bitacora._id)}
-                      className="text-red-600 hover:text-red-700"
-                      data-testid="delete-bitacora-button"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleVerHistorial(equipo._id)}
+                              className="hover:bg-blue-50"
+                              title="Ver historial"
+                            >
+                              <History className="h-4 w-4 text-blue-600" />
+                            </Button>
                   </TableCell>
                 </TableRow>
               ))
@@ -541,6 +570,43 @@ export default function Bitacoras() {
               </Button>
             </DialogFooter>
           </form>
+        {/* Dialog Historial */}
+      <Dialog open={historialOpen} onOpenChange={setHistorialOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Historial de Revisiones</DialogTitle>
+          </DialogHeader>
+          {loadingHistorial ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+            </div>
+          ) : historialData ? (
+            <div className="space-y-4">
+              <div className="bg-slate-50 p-4 rounded">
+                <p className="font-semibold">Equipo: {historialData.equipo}</p>
+                <p className="text-sm text-slate-600">Total de revisiones: {historialData.total_revisiones}</p>
+              </div>
+              <div className="space-y-3">
+                {historialData.historial.map((revision, idx) => (
+                  <div key={idx} className="border p-4 rounded">
+                    <div className="flex justify-between mb-2">
+                      <span className="font-semibold">{revision.tipo}</span>
+                      <span className="text-sm text-slate-600">
+                        {new Date(revision.fecha).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-sm mb-2">{revision.descripcion}</p>
+                    <div className="text-xs text-slate-600">
+                      <span>Técnico: {revision.tecnico}</span> | 
+                      <span> Estado: {revision.estado}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="text-center py-8 text-slate-500">No se pudo cargar el historial</p>
+          )}
         </DialogContent>
       </Dialog>
     </div>
