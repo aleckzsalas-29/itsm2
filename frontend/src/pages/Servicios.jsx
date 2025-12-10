@@ -90,6 +90,7 @@ export default function Servicios() {
     e.preventDefault();
     try {
       const submitData = { ...formData };
+      submitData.empresa_id = selectedEmpresa;
       submitData.costo_mensual = parseFloat(submitData.costo_mensual);
       submitData.fecha_inicio = new Date(submitData.fecha_inicio).toISOString();
       submitData.fecha_renovacion = new Date(submitData.fecha_renovacion).toISOString();
