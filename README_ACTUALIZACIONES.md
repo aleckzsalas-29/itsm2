@@ -236,11 +236,13 @@ sudo bash rollback_itsm.sh backup_YYYYMMDD_HHMMSS
 | Métrica | Valor |
 |---------|-------|
 | Archivos modificados | 5 |
-| Nuevas funcionalidades | 4 |
-| Líneas de código agregadas | ~1,500 |
+| Nuevas funcionalidades | 5 |
+| Líneas de código agregadas | ~1,700 |
 | Plantillas PDF | 3 |
 | Tipos de equipo soportados | 12 |
-| Documentos creados | 8 |
+| Campos nuevos en Equipos | 8 |
+| Campos eliminados (duplicados) | 5 |
+| Documentos creados | 10 |
 
 ---
 
