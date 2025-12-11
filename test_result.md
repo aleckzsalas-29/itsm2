@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Testing de Funcionalidad: Campos Personalizados - Se implementó una funcionalidad de campos personalizados dinámicos para el sistema ITSM. Los usuarios administradores pueden configurar campos adicionales para cada entidad (Equipos, Bitácoras, Empresas, Servicios)."
+user_problem_statement: "Probar la funcionalidad completa de reportes PDF del sistema ITSM: Los reportes de Empresa ahora incluyen el historial completo de mantenimientos de cada equipo. Los reportes de Bitácoras ahora soportan 3 plantillas (moderna, clasica, minimalista)."
 
 backend:
   - task: "Authentication System"
