@@ -563,6 +563,8 @@ class PDFService:
             
             # Información básica
             pdf.set_font("DejaVu", "", 9)
+            if bitacora.get('equipo'):
+                self._add_field_row(pdf, "Equipo:", bitacora.get('equipo', 'N/A'))
             self._add_field_row(pdf, "Técnico:", bitacora.get('tecnico', 'N/A'))
             self._add_field_row(pdf, "Estado:", bitacora.get('estado', 'N/A'))
             
