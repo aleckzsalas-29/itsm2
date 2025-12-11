@@ -430,14 +430,32 @@ export default function Equipos() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="tipo">Tipo *</Label>
-                  <Input
-                    id="tipo"
+                  <Select
                     value={formData.tipo}
-                    onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
+                    onValueChange={(value) => {
+                      setFormData({ ...formData, tipo: value, campos_dinamicos: {} });
+                      fetchCamposDinamicos(value);
+                    }}
                     required
-                    className="rounded-sm"
-                    placeholder="Laptop, Desktop, Servidor..."
-                  />
+                  >
+                    <SelectTrigger className="rounded-sm" id="tipo">
+                      <SelectValue placeholder="Seleccionar tipo de equipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Laptop">Laptop</SelectItem>
+                      <SelectItem value="Desktop">Desktop</SelectItem>
+                      <SelectItem value="Servidor">Servidor</SelectItem>
+                      <SelectItem value="Firewall">Firewall</SelectItem>
+                      <SelectItem value="Switch">Switch</SelectItem>
+                      <SelectItem value="Repetidor">Repetidor / Access Point</SelectItem>
+                      <SelectItem value="DVR">DVR / NVR</SelectItem>
+                      <SelectItem value="Red">Equipo de Red</SelectItem>
+                      <SelectItem value="Impresora">Impresora</SelectItem>
+                      <SelectItem value="Scanner">Scanner</SelectItem>
+                      <SelectItem value="UPS">UPS / No-Break</SelectItem>
+                      <SelectItem value="Otro">Otro</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="marca">Marca *</Label>
