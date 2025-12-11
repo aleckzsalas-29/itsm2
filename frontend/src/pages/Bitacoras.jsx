@@ -169,6 +169,18 @@ export default function Bitacoras() {
 
   const handleEdit = (bitacora) => {
     setEditingBitacora(bitacora);
+    
+    // Formatear fecha_revision si existe
+    let fechaRevisionFormatted = '';
+    if (bitacora.fecha_revision) {
+      try {
+        const fecha = new Date(bitacora.fecha_revision);
+        fechaRevisionFormatted = fecha.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+      } catch (error) {
+        console.error('Error formateando fecha_revision:', error);
+      }
+    }
+    
     setFormData({
       empresa_id: bitacora.empresa_id,
       equipo_id: bitacora.equipo_id,
@@ -176,6 +188,7 @@ export default function Bitacoras() {
       descripcion: bitacora.descripcion,
       tecnico_id: bitacora.tecnico_id,
       estado: bitacora.estado,
+      fecha_revision: fechaRevisionFormatted,
       observaciones: bitacora.observaciones || '',
       tiempo_estimado: bitacora.tiempo_estimado || '',
       limpieza_fisica: bitacora.limpieza_fisica || false,
