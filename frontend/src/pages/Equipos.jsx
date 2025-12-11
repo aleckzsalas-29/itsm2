@@ -499,53 +499,83 @@ export default function Equipos() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="procesador">Procesador</Label>
+                  <Label htmlFor="fecha_compra">Fecha de Compra</Label>
                   <Input
-                    id="procesador"
-                    value={formData.procesador}
-                    onChange={(e) => setFormData({ ...formData, procesador: e.target.value })}
+                    id="fecha_compra"
+                    type="date"
+                    value={formData.fecha_compra}
+                    onChange={(e) => setFormData({ ...formData, fecha_compra: e.target.value })}
                     className="rounded-sm"
-                    placeholder="Intel Core i7..."
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="memoria_ram">Memoria RAM</Label>
+                  <Label htmlFor="garantia_hasta">Garantía Hasta</Label>
                   <Input
-                    id="memoria_ram"
-                    value={formData.memoria_ram}
-                    onChange={(e) => setFormData({ ...formData, memoria_ram: e.target.value })}
+                    id="garantia_hasta"
+                    type="date"
+                    value={formData.garantia_hasta}
+                    onChange={(e) => setFormData({ ...formData, garantia_hasta: e.target.value })}
                     className="rounded-sm"
-                    placeholder="16 GB DDR4"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="disco_duro">Disco Duro</Label>
+                  <Label htmlFor="proveedor">Proveedor</Label>
                   <Input
-                    id="disco_duro"
-                    value={formData.disco_duro}
-                    onChange={(e) => setFormData({ ...formData, disco_duro: e.target.value })}
+                    id="proveedor"
+                    value={formData.proveedor}
+                    onChange={(e) => setFormData({ ...formData, proveedor: e.target.value })}
                     className="rounded-sm"
-                    placeholder="512 GB SSD"
+                    placeholder="Nombre del proveedor"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="espacio_disponible">Espacio Disponible</Label>
+                  <Label htmlFor="valor_compra">Valor de Compra</Label>
                   <Input
-                    id="espacio_disponible"
-                    value={formData.espacio_disponible}
-                    onChange={(e) => setFormData({ ...formData, espacio_disponible: e.target.value })}
+                    id="valor_compra"
+                    value={formData.valor_compra}
+                    onChange={(e) => setFormData({ ...formData, valor_compra: e.target.value })}
                     className="rounded-sm"
-                    placeholder="300 GB"
+                    placeholder="$1,500.00"
                   />
                 </div>
-                <div className="space-y-2 col-span-2">
-                  <Label htmlFor="componentes">Componentes Adicionales</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="direccion_mac">Dirección MAC</Label>
                   <Input
-                    id="componentes"
-                    value={formData.componentes}
-                    onChange={(e) => setFormData({ ...formData, componentes: e.target.value })}
+                    id="direccion_mac"
+                    value={formData.direccion_mac}
+                    onChange={(e) => setFormData({ ...formData, direccion_mac: e.target.value })}
+                    className="rounded-sm font-mono text-sm"
+                    placeholder="00:1A:2B:3C:4D:5E"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="direccion_ip">Dirección IP</Label>
+                  <Input
+                    id="direccion_ip"
+                    value={formData.direccion_ip}
+                    onChange={(e) => setFormData({ ...formData, direccion_ip: e.target.value })}
+                    className="rounded-sm font-mono"
+                    placeholder="192.168.1.100"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="hostname">Hostname</Label>
+                  <Input
+                    id="hostname"
+                    value={formData.hostname}
+                    onChange={(e) => setFormData({ ...formData, hostname: e.target.value })}
+                    className="rounded-sm font-mono"
+                    placeholder="PC-CONTABILIDAD"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sistema_operativo">Sistema Operativo</Label>
+                  <Input
+                    id="sistema_operativo"
+                    value={formData.sistema_operativo}
+                    onChange={(e) => setFormData({ ...formData, sistema_operativo: e.target.value })}
                     className="rounded-sm"
-                    placeholder="GPU, Tarjetas adicionales..."
+                    placeholder="Windows 11 Pro"
                   />
                 </div>
 
