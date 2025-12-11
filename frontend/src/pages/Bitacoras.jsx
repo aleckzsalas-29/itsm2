@@ -23,6 +23,7 @@ export default function Bitacoras() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingBitacora, setEditingBitacora] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState('moderna');
   const [formData, setFormData] = useState({
     empresa_id: '',
     equipo_id: '',
