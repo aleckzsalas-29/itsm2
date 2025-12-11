@@ -141,6 +141,18 @@ backend:
           agent: "testing"
           comment: "All bitacoras report templates working correctly: GET /api/bitacoras/exportar-pdf?empresa_id={id}&periodo=mes/semana/dia&template=moderna/clasica/minimalista. All generate PDFs successfully with proper filename response."
 
+  - task: "Bitácoras Template Selector UI"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Bitacoras.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ COMPREHENSIVE UI TESTING COMPLETED: Template selector functionality fully working in Bitácoras page. 1) Template selector label 'Plantilla PDF:' is visible ✅ 2) Default template shows 'Moderna - Bloques con colores e íconos' ✅ 3) Dropdown opens correctly and shows template options ✅ 4) Template selection functionality works (can select between Moderna, Clásica, Minimalista) ✅ 5) All 3 PDF export buttons present (Día, Semana, Mes) with proper red styling ✅ 6) Interface layout is professional with proper separation between CSV and PDF sections ✅ 7) Template selector positioned correctly between CSV and PDF export sections ✅. All requested functionality verified and working as expected."
+
   - task: "PDF File Generation and Storage"
     implemented: true
     working: true
