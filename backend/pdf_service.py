@@ -301,7 +301,7 @@ class PDFService:
                 self._add_field_row(pdf, "Sistema Operativo:", equipo.get('sistema_operativo', 'N/A'))
             pdf.ln(3)
         
-        # Bloque 3: Ubicación y Estado
+        # Bloque 4: Ubicación y Estado
         pdf.set_font("DejaVu", "B", 10)
         pdf.cell(0, 6, "UBICACIÓN Y ESTADO", 0, 1, "L", True)
         pdf.ln(1)
