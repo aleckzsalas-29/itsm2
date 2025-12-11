@@ -1149,6 +1149,6 @@ if __name__ == "__main__":
     success = tester.run_all_tests()
     
     if success:
-        print("\n🎉 All tests passed! Custom fields functionality is working correctly.")
+        print("\n🎉 All tests passed! PDF reports functionality is working correctly.")
     else:
         print("\n⚠️  Some tests failed. Please check the results above.")
