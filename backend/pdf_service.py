@@ -310,7 +310,7 @@ class PDFService:
         self._add_field_row(pdf, "Estado:", equipo.get('estado', 'N/A'))
         pdf.ln(3)
         
-        # Bloque 4: Credenciales (si existen)
+        # Bloque 5: Credenciales (si existen)
         if equipo.get('usuario_windows') or equipo.get('correo_usuario'):
             pdf.set_font("DejaVu", "B", 10)
             pdf.cell(0, 6, "CREDENCIALES", 0, 1, "L", True)
@@ -320,6 +320,22 @@ class PDFService:
                 self._add_field_row(pdf, "Usuario Windows:", equipo.get('usuario_windows', ''))
             if equipo.get('correo_usuario'):
                 self._add_field_row(pdf, "Correo:", equipo.get('correo_usuario', ''))
+            pdf.ln(3)
+        
+        # Bloque 6: Campos Dinámicos (Especificaciones Técnicas)
+        if equipo.get('campos_dinamicos'):
+            pdf.set_font("DejaVu", "B", 10)
+            pdf.cell(0, 6, "ESPECIFICACIONES TÉCNICAS", 0, 1, "L", True)
+            pdf.ln(1)
+            pdf.set_font("DejaVu", "", 9)
+            for campo, valor in equipo.get('campos_dinamicos', {}).items():
+                if valor:
+                    # Formatear valores booleanos
+                    if isinstance(valor, bool):
+                        valor_str = "Sí" if valor else "No"
+                    else:
+                        valor_str = str(valor)
+                    self._add_field_row(pdf, f"{campo}:", valor_str)
             pdf.ln(3)
         
         # Notas
