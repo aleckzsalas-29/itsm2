@@ -677,8 +677,8 @@ class PDFService:
     
     def _add_mantenimientos_tabla_simple(self, pdf: ITSMReportPDF, bitacoras: List[Dict]):
         """Tabla simple de mantenimientos para template clásico"""
-        headers = ["Fecha", "Tipo", "Técnico", "Estado"]
-        col_widths = [30, 45, 55, 30]
+        headers = ["Fecha", "Equipo", "Tipo", "Técnico", "Estado"]
+        col_widths = [25, 35, 35, 40, 25]
         
         pdf.set_font("DejaVu", "B", 8)
         pdf.set_fill_color(200, 200, 200)
@@ -692,9 +692,10 @@ class PDFService:
             if isinstance(fecha, str):
                 fecha = fecha[:10]
             pdf.cell(col_widths[0], 5, str(fecha), 1)
-            pdf.cell(col_widths[1], 5, str(bitacora.get("tipo", ""))[:25], 1)
-            pdf.cell(col_widths[2], 5, str(bitacora.get("tecnico", ""))[:30], 1)
-            pdf.cell(col_widths[3], 5, str(bitacora.get("estado", ""))[:15], 1)
+            pdf.cell(col_widths[1], 5, str(bitacora.get("equipo", "N/A"))[:20], 1)
+            pdf.cell(col_widths[2], 5, str(bitacora.get("tipo", ""))[:20], 1)
+            pdf.cell(col_widths[3], 5, str(bitacora.get("tecnico", ""))[:22], 1)
+            pdf.cell(col_widths[4], 5, str(bitacora.get("estado", ""))[:12], 1)
             pdf.ln()
     
     def _add_mantenimientos_minimalista(self, pdf: ITSMReportPDF, bitacoras: List[Dict]):
