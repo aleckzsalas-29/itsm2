@@ -25,6 +25,8 @@ export default function Equipos() {
   const [loadingHistorial, setLoadingHistorial] = useState(false);
   const [selectedEquipoNombre, setSelectedEquipoNombre] = useState('');
   const [customFields, setCustomFields] = useState([]);
+  const [camposDinamicos, setCamposDinamicos] = useState([]);
+  const [loadingCamposDinamicos, setLoadingCamposDinamicos] = useState(false);
   const [formData, setFormData] = useState({
     empresa_id: '',
     nombre: '',
@@ -45,6 +47,7 @@ export default function Equipos() {
     componentes: '',
     notas: '',
     campos_personalizados: {},
+    campos_dinamicos: {},
   });
 
   useEffect(() => {
