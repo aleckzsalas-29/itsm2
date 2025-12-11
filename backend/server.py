@@ -513,23 +513,44 @@ async def delete_servicio(servicio_id: str, current_user: Dict = Depends(get_cur
     return {"message": "Servicio eliminado"}
 
 @api_router.get("/reportes/empresa/{empresa_id}")
-async def generate_empresa_report(empresa_id: str, background_tasks: BackgroundTasks, current_user: Dict = Depends(get_current_user)):
-    empresa = await db.empresas.find_one({"_id": ObjectId(empresa_id)})
+async def generate_empresa_report(
+    empresa_id: str,
+    template: str = "moderna",
+    background_tasks: BackgroundTasks = None,
+    current_user: Dict = Depends(get_current_user)
+):
+    """
+    Generar reporte detallado de empresa con todos sus equipos y mantenimientos
+    template: 'moderna', 'clasica', 'minimalista'
+    """
+    empresa = await db.empresas.find_one({"_id": ObjectId(empresa_id)}, {"_id": 0})
     if not empresa:
         raise HTTPException(status_code=404, detail="Empresa no encontrada")
     
-    empresa["_id"] = str(empresa["_id"])
+    empresa["_id"] = empresa_id
     
+    # Obtener equipos con toda la información
     equipos = []
-    async for equipo in db.equipos.find({"empresa_id": empresa_id}):
-        equipo["_id"] = str(equipo["_id"])
+    async for equipo in db.equipos.find({"empresa_id": empresa_id}, {"_id": 0}):
+        equipo["_id"] = str(equipo.get("_id", ""))
         equipos.append(equipo)
     
+    # Obtener bitácoras con información completa
     bitacoras = []
-    async for bitacora in db.bitacoras.find({"empresa_id": empresa_id}):
+    async for bitacora in db.bitacoras.find({"empresa_id": empresa_id}).sort("fecha", -1):
         bitacora["_id"] = str(bitacora["_id"])
+        
+        # Obtener nombre del técnico
+        if bitacora.get("tecnico_id"):
+            tecnico = await db.usuarios.find_one({"_id": ObjectId(bitacora["tecnico_id"])}, {"_id": 0, "nombre": 1})
+            bitacora["tecnico"] = tecnico.get("nombre") if tecnico else "N/A"
+        
+        # Formatear fechas
         if isinstance(bitacora.get("fecha"), datetime):
             bitacora["fecha"] = bitacora["fecha"].isoformat()
+        if isinstance(bitacora.get("fecha_revision"), datetime):
+            bitacora["fecha_revision"] = bitacora["fecha_revision"].isoformat()
+        
         bitacoras.append(bitacora)
     
     servicios = []
@@ -556,7 +577,11 @@ async def generate_empresa_report(empresa_id: str, background_tasks: BackgroundT
                 with open(logo_path, "wb") as f:
                     f.write(logo_bytes)
         
-        filename = pdf_service.generate_empresa_report(empresa, equipos, bitacoras, servicios, logo_path, sistema_nombre)
+        # Validar template
+        if template not in ["moderna", "clasica", "minimalista"]:
+            template = "moderna"
+        
+        filename = pdf_service.generate_empresa_report(empresa, equipos, bitacoras, servicios, logo_path, sistema_nombre, template)
         
         background_tasks.add_task(
             email_service.send_report_notification,
