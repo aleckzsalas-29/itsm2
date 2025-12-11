@@ -12,6 +12,11 @@ class ITSMReportPDF(FPDF):
         self.PAGE_WIDTH = 210
         self.MARGIN = 10
         self.width = self.PAGE_WIDTH - 2 * self.MARGIN
+        
+        # Usar fuente Unicode para soportar caracteres especiales
+        self.add_font('DejaVu', '', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', uni=True)
+        self.add_font('DejaVu', 'B', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', uni=True)
+        self.add_font('DejaVu', 'I', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf', uni=True)
     
     def header(self):
         # Si hay logo, agregarlo
