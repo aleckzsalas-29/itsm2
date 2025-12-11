@@ -86,6 +86,7 @@ class Bitacora(BaseModel):
     descripcion: str
     tecnico_id: PyObjectId
     fecha: datetime = Field(default_factory=datetime.utcnow)
+    fecha_revision: Optional[datetime] = None  # Fecha programada para revisión/seguimiento
     estado: str = "Pendiente"  # Pendiente, En Progreso, Completado
     observaciones: Optional[str] = None
     tiempo_estimado: Optional[int] = None  # en minutos
