@@ -238,7 +238,9 @@ export default function Equipos() {
       componentes: '',
       notas: '',
       campos_personalizados: {},
+      campos_dinamicos: {},
     });
+    setCamposDinamicos([]);
     setEditingEquipo(null);
   };
 
