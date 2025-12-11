@@ -816,7 +816,7 @@ class PDFService:
                     pdf.ln(2)
                     
                     # Mostrar mantenimientos detallados
-                    self._add_mantenimientos_detallados_empresa(pdf, bitacoras_equipo)
+                    self._add_mantenimientos_detallados(pdf, bitacoras_equipo)
                 
                 pdf.ln(3)
                 
