@@ -566,18 +566,35 @@ async def generate_empresa_report(empresa_id: str, background_tasks: BackgroundT
         raise HTTPException(status_code=500, detail=f"Error al generar reporte: {str(e)}")
 
 @api_router.get("/reportes/equipo/{equipo_id}")
-async def generate_equipo_report(equipo_id: str, current_user: Dict = Depends(get_current_user)):
-    equipo = await db.equipos.find_one({"_id": ObjectId(equipo_id)})
+async def generate_equipo_report(
+    equipo_id: str,
+    template: str = "moderna",
+    current_user: Dict = Depends(get_current_user)
+):
+    """
+    Generar reporte detallado de equipo con selector de plantilla
+    template: 'moderna', 'clasica', 'minimalista'
+    """
+    equipo = await db.equipos.find_one({"_id": ObjectId(equipo_id)}, {"_id": 0})
     if not equipo:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
     
-    equipo["_id"] = str(equipo["_id"])
+    equipo["_id"] = equipo_id
     
+    # Obtener todas las bitácoras del equipo con información completa
     bitacoras = []
-    async for bitacora in db.bitacoras.find({"equipo_id": equipo_id}):
+    async for bitacora in db.bitacoras.find({"equipo_id": equipo_id}).sort("fecha", -1):
         bitacora["_id"] = str(bitacora["_id"])
+        
+        # Obtener nombre del técnico
+        if bitacora.get("tecnico_id"):
+            tecnico = await db.usuarios.find_one({"_id": ObjectId(bitacora["tecnico_id"])}, {"_id": 0, "nombre": 1})
+            bitacora["tecnico"] = tecnico.get("nombre") if tecnico else "N/A"
+        
+        # Formatear fecha
         if isinstance(bitacora.get("fecha"), datetime):
             bitacora["fecha"] = bitacora["fecha"].isoformat()
+        
         bitacoras.append(bitacora)
     
     try:
@@ -596,7 +613,11 @@ async def generate_equipo_report(equipo_id: str, current_user: Dict = Depends(ge
                 with open(logo_path, "wb") as f:
                     f.write(logo_bytes)
         
-        filename = pdf_service.generate_equipo_report(equipo, bitacoras, logo_path, sistema_nombre)
+        # Validar template
+        if template not in ["moderna", "clasica", "minimalista"]:
+            template = "moderna"
+        
+        filename = pdf_service.generate_equipo_report(equipo, bitacoras, logo_path, sistema_nombre, template)
         return {"filename": filename, "message": "Reporte generado exitosamente"}
     except Exception as e:
         logger.error(f"Error generating report: {str(e)}")
