@@ -64,6 +64,25 @@ export default function Equipos() {
     }
   };
 
+  const fetchCamposDinamicos = async (tipoEquipo) => {
+    if (!tipoEquipo) {
+      setCamposDinamicos([]);
+      return;
+    }
+
+    setLoadingCamposDinamicos(true);
+    try {
+      const tipoLower = tipoEquipo.toLowerCase().trim();
+      const response = await api.get(`/configuracion/campos-tipo-equipo/${tipoLower}`);
+      setCamposDinamicos(response.data.campos || []);
+    } catch (error) {
+      console.error('Error loading dynamic fields:', error);
+      setCamposDinamicos([]);
+    } finally {
+      setLoadingCamposDinamicos(false);
+    }
+  };
+
   useEffect(() => {
     if (selectedEmpresa) {
       fetchEquipos();
