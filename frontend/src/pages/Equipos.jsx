@@ -616,6 +616,106 @@ export default function Equipos() {
                   />
                 </div>
 
+                {/* Campos Dinámicos según Tipo de Equipo */}
+                {camposDinamicos.length > 0 && (
+                  <div className="col-span-2 space-y-4">
+                    <div className="border-t border-slate-200 pt-4">
+                      <h3 className="text-sm font-semibold text-slate-700 mb-3">
+                        Campos Específicos para {formData.tipo}
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        {loadingCamposDinamicos ? (
+                          <div className="col-span-2 text-center py-4">
+                            <Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400" />
+                          </div>
+                        ) : (
+                          camposDinamicos.map((campo, index) => (
+                            <div key={index} className="space-y-2">
+                              <Label htmlFor={`dinamico_${campo.nombre}`}>
+                                {campo.nombre} {campo.requerido && '*'}
+                              </Label>
+                              {campo.tipo === 'texto' && (
+                                <Input
+                                  id={`dinamico_${campo.nombre}`}
+                                  value={formData.campos_dinamicos[campo.nombre] || ''}
+                                  onChange={(e) => setFormData({
+                                    ...formData,
+                                    campos_dinamicos: {
+                                      ...formData.campos_dinamicos,
+                                      [campo.nombre]: e.target.value
+                                    }
+                                  })}
+                                  required={campo.requerido}
+                                  className="rounded-sm"
+                                />
+                              )}
+                              {campo.tipo === 'numero' && (
+                                <Input
+                                  id={`dinamico_${campo.nombre}`}
+                                  type="number"
+                                  value={formData.campos_dinamicos[campo.nombre] || ''}
+                                  onChange={(e) => setFormData({
+                                    ...formData,
+                                    campos_dinamicos: {
+                                      ...formData.campos_dinamicos,
+                                      [campo.nombre]: e.target.value
+                                    }
+                                  })}
+                                  required={campo.requerido}
+                                  className="rounded-sm"
+                                />
+                              )}
+                              {campo.tipo === 'select' && (
+                                <Select
+                                  value={formData.campos_dinamicos[campo.nombre] || ''}
+                                  onValueChange={(value) => setFormData({
+                                    ...formData,
+                                    campos_dinamicos: {
+                                      ...formData.campos_dinamicos,
+                                      [campo.nombre]: value
+                                    }
+                                  })}
+                                >
+                                  <SelectTrigger className="rounded-sm">
+                                    <SelectValue placeholder="Seleccionar..." />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {campo.opciones && campo.opciones.map((opcion, idx) => (
+                                      <SelectItem key={idx} value={opcion}>
+                                        {opcion}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              )}
+                              {campo.tipo === 'checkbox' && (
+                                <div className="flex items-center space-x-2 pt-2">
+                                  <input
+                                    id={`dinamico_${campo.nombre}`}
+                                    type="checkbox"
+                                    checked={formData.campos_dinamicos[campo.nombre] === true || formData.campos_dinamicos[campo.nombre] === 'true'}
+                                    onChange={(e) => setFormData({
+                                      ...formData,
+                                      campos_dinamicos: {
+                                        ...formData.campos_dinamicos,
+                                        [campo.nombre]: e.target.checked
+                                      }
+                                    })}
+                                    className="h-4 w-4 rounded border-slate-300"
+                                  />
+                                  <label htmlFor={`dinamico_${campo.nombre}`} className="text-sm">
+                                    {campo.nombre}
+                                  </label>
+                                </div>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Campos Personalizados */}
                 <CustomFieldsRenderer
                   customFields={customFields}
