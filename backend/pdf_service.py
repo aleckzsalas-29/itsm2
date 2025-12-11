@@ -191,22 +191,22 @@ class PDFService:
     
     def generate_empresa_report(self, empresa: Dict, equipos: List[Dict], 
                                   bitacoras: List[Dict], servicios: List[Dict],
-                                  logo_path: str = None, sistema_nombre: str = "Sistema ITSM") -> str:
+                                  logo_path: str = None, sistema_nombre: str = "Sistema ITSM",
+                                  template: str = "moderna") -> str:
+        """
+        Generar reporte detallado de empresa con todos sus equipos y mantenimientos
+        template: 'moderna', 'clasica', 'minimalista'
+        """
         pdf = ITSMReportPDF(f"Reporte de Empresa - {empresa.get('nombre', '')}", logo_path, sistema_nombre)
         pdf.add_page()
         
-        pdf.add_empresa_section(empresa)
-        
-        if equipos:
-            pdf.add_equipos_table(equipos)
-        
-        if bitacoras:
-            pdf.add_bitacoras_table(bitacoras)
-        
-        if servicios:
-            pdf.add_servicios_table(servicios)
-        
-        pdf.add_resumen(equipos, bitacoras, servicios)
+        # Aplicar estilos según template
+        if template == "clasica":
+            self._generar_empresa_clasico(pdf, empresa, equipos, bitacoras)
+        elif template == "minimalista":
+            self._generar_empresa_minimalista(pdf, empresa, equipos, bitacoras)
+        else:  # moderna (default)
+            self._generar_empresa_moderno(pdf, empresa, equipos, bitacoras)
         
         filename = f"empresa_{empresa.get('_id', 'unknown')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         filepath = os.path.join(self.output_dir, filename)
