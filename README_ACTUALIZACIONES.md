@@ -189,6 +189,7 @@ Después de actualizar, verifica:
 - [ ] **PDFs:** Selector de plantillas en Reportes, PDF se genera
 - [ ] **Campos Dinámicos:** Dropdown de tipo en Equipos, campos aparecen
 - [ ] **Fecha Revisión:** Campo visible en Bitácoras, columna en tabla
+- [ ] **Campos Optimizados:** 8 nuevos campos en Equipos (Fecha Compra, Garantía, MAC, IP, Hostname, SO, Proveedor, Valor)
 
 ---
 
