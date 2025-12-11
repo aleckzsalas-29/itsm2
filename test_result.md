@@ -117,56 +117,53 @@ backend:
           agent: "testing"
           comment: "Authentication working correctly with admin@itsm.com credentials. JWT token generation and validation successful."
 
-  - task: "Custom Fields Configuration API"
+  - task: "PDF Reports - Empresa Templates"
     implemented: true
     working: true
-    file: "server.py"
+    file: "server.py, pdf_service.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "testing"
-          comment: "All configuration endpoints working: GET/PUT /api/configuracion/campos/{entity_type} for equipos, bitacoras, empresas, servicios. Proper validation for field types and required properties."
+          comment: "All empresa report templates working correctly: GET /api/reportes/empresa/{empresa_id}?template=moderna/clasica/minimalista. All generate PDFs successfully with proper filename response. Template validation defaults to 'moderna' for invalid templates."
 
-  - task: "Custom Fields Validation"
+  - task: "PDF Reports - Bitacoras Templates"
     implemented: true
     working: true
-    file: "server.py"
+    file: "server.py, pdf_service.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "testing"
-          comment: "Validation working correctly: rejects invalid field types, missing field names, select fields without options, and invalid entity types."
+          comment: "All bitacoras report templates working correctly: GET /api/bitacoras/exportar-pdf?empresa_id={id}&periodo=mes/semana/dia&template=moderna/clasica/minimalista. All generate PDFs successfully with proper filename response."
 
-  - task: "Equipment CRUD with Custom Fields"
+  - task: "PDF File Generation and Storage"
     implemented: true
     working: true
-    file: "server.py"
-    stuck_count: 1
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: false
-          agent: "testing"
-          comment: "Initial test failed due to PyObjectId Pydantic v2 compatibility issue: 'PyObjectId.validate() takes 2 positional arguments but 3 were given'"
-        - working: true
-          agent: "testing"
-          comment: "Fixed PyObjectId validator to accept validation_info parameter for Pydantic v2 compatibility. Equipment creation, retrieval, update with custom fields now working perfectly."
-
-  - task: "Custom Fields Data Persistence"
-    implemented: true
-    working: true
-    file: "models.py"
+    file: "pdf_service.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "testing"
-          comment: "Custom fields persist correctly in MongoDB. Verified through create, read, update operations. Fields maintain data integrity across operations."
+          comment: "PDF files are correctly generated in /app/backend/pdfs/ directory. All 7 generated PDF files have valid size > 0 bytes. File naming convention follows proper timestamp format."
+
+  - task: "PDF Reports Error Handling"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Minor: Invalid ObjectId format returns 500 instead of 404, but valid ObjectId format with non-existent empresa correctly returns 404. Template validation works correctly with fallback to 'moderna'."
 
 frontend:
   - task: "Custom Fields Configuration Page"
