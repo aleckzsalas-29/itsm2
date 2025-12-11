@@ -806,7 +806,8 @@ async def exportar_bitacoras_pdf(
             empresa.get("nombre"),
             logo_path,
             sistema_nombre,
-            campos_seleccionados
+            campos_seleccionados,
+            template
         )
         
         return {"filename": filename, "message": "Reporte PDF generado exitosamente"}
