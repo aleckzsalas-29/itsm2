@@ -471,12 +471,45 @@ class PDFService:
         
         info_items = [
             ("Serie", equipo.get('numero_serie', 'N/A')),
-            ("Procesador", equipo.get('procesador', 'N/A')),
-            ("RAM", equipo.get('memoria_ram', 'N/A')),
-            ("Almacenamiento", equipo.get('disco_duro', 'N/A')),
             ("Ubicación", equipo.get('ubicacion', 'N/A')),
             ("Estado", equipo.get('estado', 'N/A')),
         ]
+        
+        # Agregar campos de compra
+        if equipo.get('fecha_compra'):
+            try:
+                fecha = datetime.fromisoformat(str(equipo.get('fecha_compra')))
+                info_items.append(("Compra", fecha.strftime('%d/%m/%Y')))
+            except:
+                pass
+        if equipo.get('garantia_hasta'):
+            try:
+                fecha = datetime.fromisoformat(str(equipo.get('garantia_hasta')))
+                info_items.append(("Garantía", fecha.strftime('%d/%m/%Y')))
+            except:
+                pass
+        if equipo.get('proveedor'):
+            info_items.append(("Proveedor", equipo.get('proveedor', 'N/A')))
+        if equipo.get('valor_compra'):
+            info_items.append(("Valor", equipo.get('valor_compra', 'N/A')))
+        
+        # Agregar campos de red
+        if equipo.get('direccion_ip'):
+            info_items.append(("IP", equipo.get('direccion_ip', 'N/A')))
+        if equipo.get('hostname'):
+            info_items.append(("Hostname", equipo.get('hostname', 'N/A')))
+        if equipo.get('sistema_operativo'):
+            info_items.append(("SO", equipo.get('sistema_operativo', 'N/A')))
+        
+        # Agregar campos dinámicos principales
+        if equipo.get('campos_dinamicos'):
+            campos_dyn = equipo.get('campos_dinamicos', {})
+            if campos_dyn.get('Procesador'):
+                info_items.append(("Procesador", campos_dyn['Procesador']))
+            if campos_dyn.get('RAM (GB)'):
+                info_items.append(("RAM", f"{campos_dyn['RAM (GB)']} GB"))
+            if campos_dyn.get('Disco Duro'):
+                info_items.append(("Disco", campos_dyn['Disco Duro']))
         
         for label, value in info_items:
             if value and value != 'N/A':
