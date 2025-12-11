@@ -393,13 +393,53 @@ class PDFService:
             ("Marca", equipo.get('marca', 'N/A')),
             ("Modelo", equipo.get('modelo', 'N/A')),
             ("Número de Serie", equipo.get('numero_serie', 'N/A')),
-            ("Procesador", equipo.get('procesador', 'N/A')),
-            ("Memoria RAM", equipo.get('memoria_ram', 'N/A')),
-            ("Disco Duro", equipo.get('disco_duro', 'N/A')),
-            ("Espacio Disponible", equipo.get('espacio_disponible', 'N/A')),
             ("Ubicación", equipo.get('ubicacion', 'N/A')),
             ("Estado", equipo.get('estado', 'N/A')),
         ]
+        
+        # Agregar campos de compra si existen
+        if equipo.get('fecha_compra'):
+            try:
+                fecha = datetime.fromisoformat(str(equipo.get('fecha_compra')))
+                campos.append(("Fecha de Compra", fecha.strftime('%d/%m/%Y')))
+            except:
+                campos.append(("Fecha de Compra", equipo.get('fecha_compra', 'N/A')))
+        if equipo.get('garantia_hasta'):
+            try:
+                fecha = datetime.fromisoformat(str(equipo.get('garantia_hasta')))
+                campos.append(("Garantía Hasta", fecha.strftime('%d/%m/%Y')))
+            except:
+                campos.append(("Garantía Hasta", equipo.get('garantia_hasta', 'N/A')))
+        if equipo.get('proveedor'):
+            campos.append(("Proveedor", equipo.get('proveedor', 'N/A')))
+        if equipo.get('valor_compra'):
+            campos.append(("Valor de Compra", equipo.get('valor_compra', 'N/A')))
+        
+        # Agregar campos de red si existen
+        if equipo.get('direccion_mac'):
+            campos.append(("Dirección MAC", equipo.get('direccion_mac', 'N/A')))
+        if equipo.get('direccion_ip'):
+            campos.append(("Dirección IP", equipo.get('direccion_ip', 'N/A')))
+        if equipo.get('hostname'):
+            campos.append(("Hostname", equipo.get('hostname', 'N/A')))
+        if equipo.get('sistema_operativo'):
+            campos.append(("Sistema Operativo", equipo.get('sistema_operativo', 'N/A')))
+        
+        # Agregar credenciales si existen
+        if equipo.get('usuario_windows'):
+            campos.append(("Usuario Windows", equipo.get('usuario_windows', 'N/A')))
+        if equipo.get('correo_usuario'):
+            campos.append(("Correo Usuario", equipo.get('correo_usuario', 'N/A')))
+        
+        # Agregar campos dinámicos
+        if equipo.get('campos_dinamicos'):
+            for campo, valor in equipo.get('campos_dinamicos', {}).items():
+                if valor:
+                    if isinstance(valor, bool):
+                        valor_str = "Sí" if valor else "No"
+                    else:
+                        valor_str = str(valor)
+                    campos.append((campo, valor_str))
         
         for campo, valor in campos:
             pdf.cell(50, 6, campo, 1, 0, "L")
