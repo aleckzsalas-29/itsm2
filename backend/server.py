@@ -64,13 +64,17 @@ class EquipoCreate(BaseModel):
     password_correo: Optional[str] = None
     ubicacion: str
     estado: str = "Activo"
-    memoria_ram: Optional[str] = None
-    disco_duro: Optional[str] = None
-    espacio_disponible: Optional[str] = None
-    procesador: Optional[str] = None
-    componentes: Optional[str] = None
+    fecha_compra: Optional[str] = None
+    garantia_hasta: Optional[str] = None
+    proveedor: Optional[str] = None
+    valor_compra: Optional[str] = None
+    direccion_mac: Optional[str] = None
+    direccion_ip: Optional[str] = None
+    hostname: Optional[str] = None
+    sistema_operativo: Optional[str] = None
     notas: Optional[str] = None
     campos_personalizados: Dict[str, Any] = {}
+    campos_dinamicos: Dict[str, Any] = {}
 
 class BitacoraCreate(BaseModel):
     equipo_id: str
