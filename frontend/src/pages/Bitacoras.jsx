@@ -334,20 +334,20 @@ export default function Bitacoras() {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={8} className="text-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin mx-auto text-slate-400" />
                 </TableCell>
               </TableRow>
             ) : !selectedEmpresa ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-slate-500">
+                <TableCell colSpan={8} className="text-center py-8 text-slate-500">
                   <ClipboardList className="h-12 w-12 mx-auto mb-2 text-slate-300" />
                   <p>Selecciona una empresa para ver sus bitácoras</p>
                 </TableCell>
               </TableRow>
             ) : bitacoras.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-slate-500">
+                <TableCell colSpan={8} className="text-center py-8 text-slate-500">
                   <ClipboardList className="h-12 w-12 mx-auto mb-2 text-slate-300" />
                   <p>No hay bitácoras registradas para esta empresa</p>
                 </TableCell>
@@ -370,6 +370,9 @@ export default function Bitacoras() {
                     }`}>
                       {bitacora.estado}
                     </span>
+                  </TableCell>
+                  <TableCell className="text-slate-600 text-sm">
+                    {bitacora.fecha_revision ? format(new Date(bitacora.fecha_revision), 'dd/MM/yyyy') : '-'}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button
