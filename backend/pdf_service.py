@@ -27,27 +27,27 @@ class ITSMReportPDF(FPDF):
             except:
                 pass
         
-        self.set_font("helvetica", "B", 16)
+        self.set_font("DejaVu", "B", 16)
         self.set_text_color(15, 23, 42)
         self.cell(0, 10, self.titulo, 0, 1, "C")
-        self.set_font("helvetica", "", 9)
+        self.set_font("DejaVu", "", 9)
         self.set_text_color(100, 116, 139)
         self.cell(0, 5, f"{self.sistema_nombre} - Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}", 0, 1, "C")
         self.ln(5)
     
     def footer(self):
         self.set_y(-15)
-        self.set_font("helvetica", "I", 8)
+        self.set_font("DejaVu", "I", 8)
         self.set_text_color(100, 116, 139)
         self.cell(0, 10, f"Página {self.page_no()}", 0, 0, "C")
     
     def add_empresa_section(self, empresa: Dict[str, Any]):
-        self.set_font("helvetica", "B", 12)
+        self.set_font("DejaVu", "B", 12)
         self.set_text_color(15, 23, 42)
         self.cell(0, 8, f"Empresa: {empresa.get('nombre', '')}", 0, 1)
         self.ln(2)
         
-        self.set_font("helvetica", "", 9)
+        self.set_font("DejaVu", "", 9)
         self.set_text_color(51, 65, 85)
         info_text = f"""RFC: {empresa.get('rfc', 'N/A')}
 Dirección: {empresa.get('direccion', '')}
@@ -59,21 +59,21 @@ Contacto: {empresa.get('contacto', '')}"""
     
     def add_equipos_table(self, equipos: List[Dict[str, Any]]):
         if not equipos:
-            self.set_font("helvetica", "", 10)
+            self.set_font("DejaVu", "", 10)
             self.cell(0, 10, "No se encontraron equipos", 0, 1)
             return
         
         headers = ["Nombre", "Tipo", "Marca", "Modelo", "Serie", "Estado", "Ubicación"]
         col_widths = [30, 25, 25, 25, 30, 20, 35]
         
-        self.set_font("helvetica", "B", 8)
+        self.set_font("DejaVu", "B", 8)
         self.set_fill_color(15, 23, 42)
         self.set_text_color(255, 255, 255)
         for header, width in zip(headers, col_widths):
             self.cell(width, 7, header, 1, 0, "C", True)
         self.ln()
         
-        self.set_font("helvetica", "", 7)
+        self.set_font("DejaVu", "", 7)
         self.set_text_color(0, 0, 0)
         for equipo in equipos:
             self.cell(col_widths[0], 6, str(equipo.get("nombre", ""))[:20], 1)
@@ -87,12 +87,12 @@ Contacto: {empresa.get('contacto', '')}"""
     
     def add_bitacoras_table(self, bitacoras: List[Dict[str, Any]]):
         if not bitacoras:
-            self.set_font("helvetica", "", 10)
+            self.set_font("DejaVu", "", 10)
             self.cell(0, 10, "No se encontraron bitácoras", 0, 1)
             return
         
         self.ln(5)
-        self.set_font("helvetica", "B", 11)
+        self.set_font("DejaVu", "B", 11)
         self.set_text_color(15, 23, 42)
         self.cell(0, 8, "Bitácoras de Mantenimiento", 0, 1)
         self.ln(2)
@@ -100,14 +100,14 @@ Contacto: {empresa.get('contacto', '')}"""
         headers = ["Fecha", "Tipo", "Descripción", "Estado", "Costo"]
         col_widths = [25, 30, 80, 25, 20]
         
-        self.set_font("helvetica", "B", 8)
+        self.set_font("DejaVu", "B", 8)
         self.set_fill_color(15, 23, 42)
         self.set_text_color(255, 255, 255)
         for header, width in zip(headers, col_widths):
             self.cell(width, 7, header, 1, 0, "C", True)
         self.ln()
         
-        self.set_font("helvetica", "", 7)
+        self.set_font("DejaVu", "", 7)
         self.set_text_color(0, 0, 0)
         for bitacora in bitacoras:
             fecha = bitacora.get("fecha", "")
@@ -126,7 +126,7 @@ Contacto: {empresa.get('contacto', '')}"""
             return
         
         self.ln(5)
-        self.set_font("helvetica", "B", 11)
+        self.set_font("DejaVu", "B", 11)
         self.set_text_color(15, 23, 42)
         self.cell(0, 8, "Servicios Contratados", 0, 1)
         self.ln(2)
@@ -134,14 +134,14 @@ Contacto: {empresa.get('contacto', '')}"""
         headers = ["Nombre", "Tipo", "Proveedor", "Costo Mensual", "Renovación", "Estado"]
         col_widths = [35, 25, 30, 25, 25, 20]
         
-        self.set_font("helvetica", "B", 8)
+        self.set_font("DejaVu", "B", 8)
         self.set_fill_color(15, 23, 42)
         self.set_text_color(255, 255, 255)
         for header, width in zip(headers, col_widths):
             self.cell(width, 7, header, 1, 0, "C", True)
         self.ln()
         
-        self.set_font("helvetica", "", 7)
+        self.set_font("DejaVu", "", 7)
         self.set_text_color(0, 0, 0)
         for servicio in servicios:
             self.cell(col_widths[0], 6, str(servicio.get("nombre", ""))[:25], 1)
@@ -159,7 +159,7 @@ Contacto: {empresa.get('contacto', '')}"""
     
     def add_resumen(self, equipos: List[Dict], bitacoras: List[Dict], servicios: List[Dict]):
         self.ln(8)
-        self.set_font("helvetica", "B", 11)
+        self.set_font("DejaVu", "B", 11)
         self.set_text_color(15, 23, 42)
         self.cell(0, 8, "Resumen", 0, 1)
         self.ln(2)
@@ -169,7 +169,7 @@ Contacto: {empresa.get('contacto', '')}"""
         total_mantenimientos = len(bitacoras)
         costo_servicios = sum(s.get("costo_mensual", 0) for s in servicios if s.get("activo", False))
         
-        self.set_font("helvetica", "", 9)
+        self.set_font("DejaVu", "", 9)
         self.set_text_color(51, 65, 85)
         resumen = f"""Total de Equipos: {total_equipos}
 Equipos Activos: {equipos_activos}
@@ -242,19 +242,19 @@ class PDFService:
         # Título del equipo con fondo
         pdf.set_fill_color(59, 130, 246)  # Azul moderno
         pdf.set_text_color(255, 255, 255)
-        pdf.set_font("helvetica", "B", 14)
+        pdf.set_font("DejaVu", "B", 14)
         pdf.cell(0, 10, f"📦 {equipo.get('nombre', '')}", 0, 1, "L", True)
         pdf.ln(3)
         
         # Información básica en cajas
         pdf.set_text_color(51, 65, 85)
-        pdf.set_font("helvetica", "B", 10)
+        pdf.set_font("DejaVu", "B", 10)
         pdf.set_fill_color(241, 245, 249)
         
         # Bloque 1: Identificación
         pdf.cell(0, 6, "IDENTIFICACIÓN", 0, 1, "L", True)
         pdf.ln(1)
-        pdf.set_font("helvetica", "", 9)
+        pdf.set_font("DejaVu", "", 9)
         self._add_field_row(pdf, "Tipo:", equipo.get('tipo', 'N/A'))
         self._add_field_row(pdf, "Marca:", equipo.get('marca', 'N/A'))
         self._add_field_row(pdf, "Modelo:", equipo.get('modelo', 'N/A'))
@@ -262,10 +262,10 @@ class PDFService:
         pdf.ln(3)
         
         # Bloque 2: Especificaciones Técnicas
-        pdf.set_font("helvetica", "B", 10)
+        pdf.set_font("DejaVu", "B", 10)
         pdf.cell(0, 6, "ESPECIFICACIONES TÉCNICAS", 0, 1, "L", True)
         pdf.ln(1)
-        pdf.set_font("helvetica", "", 9)
+        pdf.set_font("DejaVu", "", 9)
         self._add_field_row(pdf, "Procesador:", equipo.get('procesador', 'N/A'))
         self._add_field_row(pdf, "Memoria RAM:", equipo.get('memoria_ram', 'N/A'))
         self._add_field_row(pdf, "Disco Duro:", equipo.get('disco_duro', 'N/A'))
@@ -275,20 +275,20 @@ class PDFService:
         pdf.ln(3)
         
         # Bloque 3: Ubicación y Estado
-        pdf.set_font("helvetica", "B", 10)
+        pdf.set_font("DejaVu", "B", 10)
         pdf.cell(0, 6, "UBICACIÓN Y ESTADO", 0, 1, "L", True)
         pdf.ln(1)
-        pdf.set_font("helvetica", "", 9)
+        pdf.set_font("DejaVu", "", 9)
         self._add_field_row(pdf, "Ubicación:", equipo.get('ubicacion', 'N/A'))
         self._add_field_row(pdf, "Estado:", equipo.get('estado', 'N/A'))
         pdf.ln(3)
         
         # Bloque 4: Credenciales (si existen)
         if equipo.get('usuario_windows') or equipo.get('correo_usuario'):
-            pdf.set_font("helvetica", "B", 10)
+            pdf.set_font("DejaVu", "B", 10)
             pdf.cell(0, 6, "CREDENCIALES", 0, 1, "L", True)
             pdf.ln(1)
-            pdf.set_font("helvetica", "", 9)
+            pdf.set_font("DejaVu", "", 9)
             if equipo.get('usuario_windows'):
                 self._add_field_row(pdf, "Usuario Windows:", equipo.get('usuario_windows', ''))
             if equipo.get('correo_usuario'):
@@ -297,19 +297,19 @@ class PDFService:
         
         # Notas
         if equipo.get('notas'):
-            pdf.set_font("helvetica", "B", 10)
+            pdf.set_font("DejaVu", "B", 10)
             pdf.cell(0, 6, "NOTAS ADICIONALES", 0, 1, "L", True)
             pdf.ln(1)
-            pdf.set_font("helvetica", "", 9)
+            pdf.set_font("DejaVu", "", 9)
             pdf.multi_cell(0, 5, equipo.get('notas', ''))
             pdf.ln(3)
         
         # Campos personalizados
         if equipo.get('campos_personalizados'):
-            pdf.set_font("helvetica", "B", 10)
+            pdf.set_font("DejaVu", "B", 10)
             pdf.cell(0, 6, "INFORMACIÓN ADICIONAL", 0, 1, "L", True)
             pdf.ln(1)
-            pdf.set_font("helvetica", "", 9)
+            pdf.set_font("DejaVu", "", 9)
             for campo, valor in equipo.get('campos_personalizados', {}).items():
                 if valor:
                     self._add_field_row(pdf, f"{campo}:", str(valor))
@@ -320,7 +320,7 @@ class PDFService:
             pdf.add_page()
             pdf.set_fill_color(16, 185, 129)  # Verde
             pdf.set_text_color(255, 255, 255)
-            pdf.set_font("helvetica", "B", 12)
+            pdf.set_font("DejaVu", "B", 12)
             pdf.cell(0, 10, f"🔧 HISTORIAL DE MANTENIMIENTOS ({len(bitacoras)})", 0, 1, "L", True)
             pdf.ln(5)
             
@@ -329,7 +329,7 @@ class PDFService:
     def _generar_equipo_clasico(self, pdf: ITSMReportPDF, equipo: Dict, bitacoras: List[Dict]):
         """Template clásico con líneas y formato tradicional"""
         # Título
-        pdf.set_font("helvetica", "B", 14)
+        pdf.set_font("DejaVu", "B", 14)
         pdf.set_text_color(0, 0, 0)
         pdf.cell(0, 10, f"Equipo: {equipo.get('nombre', '')}", 0, 1, "C")
         pdf.ln(5)
@@ -340,11 +340,11 @@ class PDFService:
         pdf.ln(5)
         
         # Información en formato de tabla
-        pdf.set_font("helvetica", "B", 10)
+        pdf.set_font("DejaVu", "B", 10)
         pdf.cell(50, 7, "Campo", 1, 0, "L")
         pdf.cell(0, 7, "Valor", 1, 1, "L")
         
-        pdf.set_font("helvetica", "", 9)
+        pdf.set_font("DejaVu", "", 9)
         campos = [
             ("Tipo", equipo.get('tipo', 'N/A')),
             ("Marca", equipo.get('marca', 'N/A')),
@@ -366,7 +366,7 @@ class PDFService:
         
         # Mantenimientos en tabla simple
         if bitacoras:
-            pdf.set_font("helvetica", "B", 11)
+            pdf.set_font("DejaVu", "B", 11)
             pdf.cell(0, 8, f"Historial de Mantenimientos ({len(bitacoras)})", 0, 1)
             pdf.ln(2)
             self._add_mantenimientos_tabla_simple(pdf, bitacoras)
@@ -374,16 +374,16 @@ class PDFService:
     def _generar_equipo_minimalista(self, pdf: ITSMReportPDF, equipo: Dict, bitacoras: List[Dict]):
         """Template minimalista con espacios amplios y tipografía limpia"""
         # Título simple
-        pdf.set_font("helvetica", "", 16)
+        pdf.set_font("DejaVu", "", 16)
         pdf.set_text_color(51, 65, 85)
         pdf.cell(0, 12, equipo.get('nombre', ''), 0, 1)
-        pdf.set_font("helvetica", "", 8)
+        pdf.set_font("DejaVu", "", 8)
         pdf.set_text_color(148, 163, 184)
         pdf.cell(0, 5, equipo.get('tipo', '') + " • " + equipo.get('marca', '') + " " + equipo.get('modelo', ''), 0, 1)
         pdf.ln(8)
         
         # Información sin bordes
-        pdf.set_font("helvetica", "", 9)
+        pdf.set_font("DejaVu", "", 9)
         pdf.set_text_color(71, 85, 105)
         
         info_items = [
@@ -397,10 +397,10 @@ class PDFService:
         
         for label, value in info_items:
             if value and value != 'N/A':
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(148, 163, 184)
                 pdf.cell(40, 6, label.upper(), 0, 0)
-                pdf.set_font("helvetica", "", 9)
+                pdf.set_font("DejaVu", "", 9)
                 pdf.set_text_color(51, 65, 85)
                 pdf.cell(0, 6, str(value), 0, 1)
         
@@ -408,7 +408,7 @@ class PDFService:
         
         # Mantenimientos minimalistas
         if bitacoras:
-            pdf.set_font("helvetica", "", 11)
+            pdf.set_font("DejaVu", "", 11)
             pdf.set_text_color(71, 85, 105)
             pdf.cell(0, 8, f"Mantenimientos", 0, 1)
             pdf.ln(3)
@@ -416,10 +416,10 @@ class PDFService:
     
     def _add_field_row(self, pdf: ITSMReportPDF, label: str, value: str):
         """Helper para agregar fila de campo-valor"""
-        pdf.set_font("helvetica", "B", 9)
+        pdf.set_font("DejaVu", "B", 9)
         pdf.set_text_color(71, 85, 105)
         pdf.cell(50, 5, label, 0, 0)
-        pdf.set_font("helvetica", "", 9)
+        pdf.set_font("DejaVu", "", 9)
         pdf.set_text_color(51, 65, 85)
         pdf.cell(0, 5, str(value), 0, 1)
     
@@ -429,7 +429,7 @@ class PDFService:
             # Encabezado de cada mantenimiento
             pdf.set_fill_color(241, 245, 249)
             pdf.set_text_color(51, 65, 85)
-            pdf.set_font("helvetica", "B", 10)
+            pdf.set_font("DejaVu", "B", 10)
             
             fecha_str = "N/A"
             if bitacora.get('fecha'):
@@ -446,7 +446,7 @@ class PDFService:
             pdf.ln(2)
             
             # Información básica
-            pdf.set_font("helvetica", "", 9)
+            pdf.set_font("DejaVu", "", 9)
             self._add_field_row(pdf, "Técnico:", bitacora.get('tecnico', 'N/A'))
             self._add_field_row(pdf, "Estado:", bitacora.get('estado', 'N/A'))
             
@@ -459,10 +459,10 @@ class PDFService:
             
             # Descripción
             if bitacora.get('descripcion'):
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.set_text_color(71, 85, 105)
                 pdf.cell(0, 5, "Descripción:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(51, 65, 85)
                 pdf.multi_cell(0, 4, bitacora.get('descripcion', ''))
                 pdf.ln(2)
@@ -476,10 +476,10 @@ class PDFService:
             if bitacora.get('optimizacion_sistema'): preventivo_items.append("✓ Optimización del sistema")
             
             if preventivo_items:
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.set_text_color(16, 185, 129)
                 pdf.cell(0, 5, "🔧 Mantenimiento Preventivo:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(51, 65, 85)
                 for item in preventivo_items:
                     pdf.cell(5, 4, "", 0, 0)
@@ -488,48 +488,48 @@ class PDFService:
             
             # Mantenimiento Correctivo
             if bitacora.get('diagnostico_problema'):
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.set_text_color(239, 68, 68)
                 pdf.cell(0, 5, "🔍 Diagnóstico del Problema:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(51, 65, 85)
                 pdf.multi_cell(0, 4, bitacora['diagnostico_problema'])
                 pdf.ln(2)
             
             if bitacora.get('solucion_aplicada'):
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.set_text_color(59, 130, 246)
                 pdf.cell(0, 5, "✅ Solución Aplicada:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(51, 65, 85)
                 pdf.multi_cell(0, 4, bitacora['solucion_aplicada'])
                 pdf.ln(2)
             
             if bitacora.get('componentes_reemplazados'):
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.set_text_color(168, 85, 247)
                 pdf.cell(0, 5, "🔩 Componentes Reemplazados:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(51, 65, 85)
                 pdf.multi_cell(0, 4, bitacora['componentes_reemplazados'])
                 pdf.ln(2)
             
             # Observaciones
             if bitacora.get('observaciones'):
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.set_text_color(71, 85, 105)
                 pdf.cell(0, 5, "📝 Observaciones:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(51, 65, 85)
                 pdf.multi_cell(0, 4, bitacora['observaciones'])
                 pdf.ln(2)
             
             # Anotaciones extras
             if bitacora.get('anotaciones_extras'):
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.set_text_color(71, 85, 105)
                 pdf.cell(0, 5, "📌 Anotaciones Adicionales:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(51, 65, 85)
                 pdf.multi_cell(0, 4, bitacora['anotaciones_extras'])
                 pdf.ln(2)
@@ -550,13 +550,13 @@ class PDFService:
         headers = ["Fecha", "Tipo", "Técnico", "Estado"]
         col_widths = [30, 45, 55, 30]
         
-        pdf.set_font("helvetica", "B", 8)
+        pdf.set_font("DejaVu", "B", 8)
         pdf.set_fill_color(200, 200, 200)
         for header, width in zip(headers, col_widths):
             pdf.cell(width, 6, header, 1, 0, "C", True)
         pdf.ln()
         
-        pdf.set_font("helvetica", "", 7)
+        pdf.set_font("DejaVu", "", 7)
         for bitacora in bitacoras[:20]:  # Limitar a 20 para no saturar
             fecha = bitacora.get("fecha", "")
             if isinstance(fecha, str):
@@ -570,7 +570,7 @@ class PDFService:
     def _add_mantenimientos_minimalista(self, pdf: ITSMReportPDF, bitacoras: List[Dict]):
         """Lista minimalista de mantenimientos"""
         for bitacora in bitacoras[:15]:  # Limitar para mantener minimalismo
-            pdf.set_font("helvetica", "", 8)
+            pdf.set_font("DejaVu", "", 8)
             pdf.set_text_color(148, 163, 184)
             
             fecha_str = ""
@@ -585,7 +585,7 @@ class PDFService:
             pdf.cell(0, 5, f"{fecha_str} • {bitacora.get('tipo', '')} • {bitacora.get('estado', '')}", 0, 1)
             
             if bitacora.get('descripcion'):
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 pdf.set_text_color(100, 116, 139)
                 desc = bitacora.get('descripcion', '')[:80]
                 pdf.cell(0, 4, desc, 0, 1)
@@ -625,17 +625,17 @@ class PDFService:
         campos_a_mostrar = {k: v for k, v in campos_disponibles.items() if k in campos_seleccionados}
         
         if not bitacoras:
-            pdf.set_font("helvetica", "I", 10)
+            pdf.set_font("DejaVu", "I", 10)
             pdf.cell(0, 10, "No hay bitácoras para mostrar", 0, 1, "C")
         else:
             # Título de sección
-            pdf.set_font("helvetica", "B", 12)
+            pdf.set_font("DejaVu", "B", 12)
             pdf.set_text_color(15, 23, 42)
             pdf.cell(0, 8, f"Total de Bitácoras: {len(bitacoras)}", 0, 1)
             pdf.ln(3)
             
             # Crear tabla con campos seleccionados
-            pdf.set_font("helvetica", "B", 8)
+            pdf.set_font("DejaVu", "B", 8)
             pdf.set_fill_color(241, 245, 249)
             pdf.set_text_color(51, 65, 85)
             
@@ -649,7 +649,7 @@ class PDFService:
             pdf.ln()
             
             # Datos
-            pdf.set_font("helvetica", "", 7)
+            pdf.set_font("DejaVu", "", 7)
             for bitacora in bitacoras:
                 for campo in campos_a_mostrar.keys():
                     value = bitacora.get(campo, 'N/A')
@@ -688,11 +688,11 @@ class PDFService:
         pdf.add_page()
         
         if not bitacoras:
-            pdf.set_font("helvetica", "I", 10)
+            pdf.set_font("DejaVu", "I", 10)
             pdf.cell(0, 10, "No hay bitácoras para mostrar", 0, 1, "C")
         else:
             # Título de sección
-            pdf.set_font("helvetica", "B", 12)
+            pdf.set_font("DejaVu", "B", 12)
             pdf.set_text_color(15, 23, 42)
             pdf.cell(0, 8, f"Total de Bitácoras: {len(bitacoras)}", 0, 1)
             pdf.ln(5)
@@ -702,13 +702,13 @@ class PDFService:
                 # Encabezado de bitácora
                 pdf.set_fill_color(30, 41, 59)
                 pdf.set_text_color(255, 255, 255)
-                pdf.set_font("helvetica", "B", 10)
+                pdf.set_font("DejaVu", "B", 10)
                 pdf.cell(0, 8, f"Bitácora #{idx}", 0, 1, "L", True)
                 pdf.ln(2)
                 
                 # Información básica
                 pdf.set_text_color(51, 65, 85)
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 
                 # Fecha
                 fecha_str = "N/A"
@@ -723,48 +723,48 @@ class PDFService:
                         fecha_str = str(bitacora['fecha'])
                 
                 pdf.cell(40, 6, "Fecha:", 0, 0)
-                pdf.set_font("helvetica", "", 9)
+                pdf.set_font("DejaVu", "", 9)
                 pdf.cell(0, 6, fecha_str, 0, 1)
                 
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.cell(40, 6, "Equipo:", 0, 0)
-                pdf.set_font("helvetica", "", 9)
+                pdf.set_font("DejaVu", "", 9)
                 pdf.cell(0, 6, bitacora.get('equipo', 'N/A'), 0, 1)
                 
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.cell(40, 6, "Tipo:", 0, 0)
-                pdf.set_font("helvetica", "", 9)
+                pdf.set_font("DejaVu", "", 9)
                 pdf.cell(0, 6, bitacora.get('tipo', 'N/A'), 0, 1)
                 
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.cell(40, 6, "Técnico:", 0, 0)
-                pdf.set_font("helvetica", "", 9)
+                pdf.set_font("DejaVu", "", 9)
                 pdf.cell(0, 6, bitacora.get('tecnico', 'N/A'), 0, 1)
                 
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.cell(40, 6, "Estado:", 0, 0)
-                pdf.set_font("helvetica", "", 9)
+                pdf.set_font("DejaVu", "", 9)
                 pdf.cell(0, 6, bitacora.get('estado', 'N/A'), 0, 1)
                 
                 # Tiempos
                 tiempo_est = bitacora.get('tiempo_estimado')
                 tiempo_real = bitacora.get('tiempo_real')
                 if tiempo_est or tiempo_real:
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(40, 6, "Tiempo Estimado:", 0, 0)
-                    pdf.set_font("helvetica", "", 9)
+                    pdf.set_font("DejaVu", "", 9)
                     pdf.cell(60, 6, f"{tiempo_est} min" if tiempo_est else "N/A", 0, 0)
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(40, 6, "Tiempo Real:", 0, 0)
-                    pdf.set_font("helvetica", "", 9)
+                    pdf.set_font("DejaVu", "", 9)
                     pdf.cell(0, 6, f"{tiempo_real} min" if tiempo_real else "N/A", 0, 1)
                 
                 pdf.ln(3)
                 
                 # Descripción
-                pdf.set_font("helvetica", "B", 9)
+                pdf.set_font("DejaVu", "B", 9)
                 pdf.cell(0, 6, "Descripción:", 0, 1)
-                pdf.set_font("helvetica", "", 8)
+                pdf.set_font("DejaVu", "", 8)
                 descripcion = bitacora.get('descripcion', 'N/A')
                 pdf.multi_cell(0, 5, descripcion)
                 pdf.ln(2)
@@ -778,9 +778,9 @@ class PDFService:
                 if bitacora.get('optimizacion_sistema'): preventivo_items.append("Optimización del sistema")
                 
                 if preventivo_items:
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(0, 6, "Mantenimiento Preventivo:", 0, 1)
-                    pdf.set_font("helvetica", "", 8)
+                    pdf.set_font("DejaVu", "", 8)
                     for item in preventivo_items:
                         pdf.cell(10, 5, "", 0, 0)
                         pdf.cell(0, 5, f"• {item}", 0, 1)
@@ -788,39 +788,39 @@ class PDFService:
                 
                 # Mantenimiento Correctivo
                 if bitacora.get('diagnostico_problema'):
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(0, 6, "Diagnóstico del Problema:", 0, 1)
-                    pdf.set_font("helvetica", "", 8)
+                    pdf.set_font("DejaVu", "", 8)
                     pdf.multi_cell(0, 5, bitacora['diagnostico_problema'])
                     pdf.ln(2)
                 
                 if bitacora.get('solucion_aplicada'):
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(0, 6, "Solución Aplicada:", 0, 1)
-                    pdf.set_font("helvetica", "", 8)
+                    pdf.set_font("DejaVu", "", 8)
                     pdf.multi_cell(0, 5, bitacora['solucion_aplicada'])
                     pdf.ln(2)
                 
                 if bitacora.get('componentes_reemplazados'):
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(0, 6, "Componentes Reemplazados:", 0, 1)
-                    pdf.set_font("helvetica", "", 8)
+                    pdf.set_font("DejaVu", "", 8)
                     pdf.multi_cell(0, 5, bitacora['componentes_reemplazados'])
                     pdf.ln(2)
                 
                 # Observaciones
                 if bitacora.get('observaciones'):
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(0, 6, "Observaciones:", 0, 1)
-                    pdf.set_font("helvetica", "", 8)
+                    pdf.set_font("DejaVu", "", 8)
                     pdf.multi_cell(0, 5, bitacora['observaciones'])
                     pdf.ln(2)
                 
                 # Anotaciones extras
                 if bitacora.get('anotaciones_extras'):
-                    pdf.set_font("helvetica", "B", 9)
+                    pdf.set_font("DejaVu", "B", 9)
                     pdf.cell(0, 6, "Anotaciones Adicionales:", 0, 1)
-                    pdf.set_font("helvetica", "", 8)
+                    pdf.set_font("DejaVu", "", 8)
                     pdf.multi_cell(0, 5, bitacora['anotaciones_extras'])
                     pdf.ln(2)
                 
