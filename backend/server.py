@@ -83,6 +83,7 @@ class BitacoraCreate(BaseModel):
     descripcion: str
     tecnico_id: str
     fecha: Optional[datetime] = None
+    fecha_revision: Optional[datetime] = None
     estado: str = "Pendiente"
     observaciones: Optional[str] = None
     tiempo_estimado: Optional[int] = None
