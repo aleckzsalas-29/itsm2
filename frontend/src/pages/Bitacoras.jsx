@@ -512,6 +512,28 @@ export default function Bitacoras() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fecha_revision">Fecha de Revisión</Label>
+                  <Input
+                    id="fecha_revision"
+                    type="date"
+                    value={formData.fecha_revision}
+                    onChange={(e) => setFormData({ ...formData, fecha_revision: e.target.value })}
+                    className="rounded-sm"
+                  />
+                  <p className="text-xs text-slate-500">Fecha programada para revisión o seguimiento</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tiempo_estimado">Tiempo Estimado (minutos)</Label>
+                  <Input
+                    id="tiempo_estimado"
+                    type="number"
+                    value={formData.tiempo_estimado}
+                    onChange={(e) => setFormData({ ...formData, tiempo_estimado: e.target.value })}
+                    className="rounded-sm"
+                    placeholder="ej: 60"
+                  />
+                </div>
                 <div className="space-y-2 col-span-2">
                   <Label>Observaciones</Label>
                   <Textarea
