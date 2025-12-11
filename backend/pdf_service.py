@@ -713,7 +713,8 @@ class PDFService:
                 except:
                     pass
             
-            pdf.cell(0, 5, f"{fecha_str} • {bitacora.get('tipo', '')} • {bitacora.get('estado', '')}", 0, 1)
+            equipo_str = bitacora.get('equipo', 'N/A')
+            pdf.cell(0, 5, f"{fecha_str} • {equipo_str} • {bitacora.get('tipo', '')} • {bitacora.get('estado', '')}", 0, 1)
             
             if bitacora.get('descripcion'):
                 pdf.set_font("DejaVu", "", 8)
