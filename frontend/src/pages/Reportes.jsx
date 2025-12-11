@@ -63,7 +63,7 @@ export default function Reportes() {
 
     setLoading(true);
     try {
-      const response = await api.get(`/reportes/equipo/${selectedEquipo}`);
+      const response = await api.get(`/reportes/equipo/${selectedEquipo}?template=${selectedTemplate}`);
       toast.success('Reporte generado exitosamente');
       
       const downloadUrl = `${process.env.REACT_APP_BACKEND_URL}${response.data.filename.replace('equipo_', '/api/reportes/download/equipo_')}`;
