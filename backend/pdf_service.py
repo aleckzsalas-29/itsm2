@@ -806,28 +806,17 @@ class PDFService:
                             valor_str = "Sí" if isinstance(valor, bool) and valor else ("No" if isinstance(valor, bool) else str(valor))
                             pdf.cell(0, 4, f"  • {campo}: {valor_str}", 0, 1)
                 
-                # Bitácoras de este equipo
+                # Bitácoras detalladas de este equipo
                 bitacoras_equipo = [b for b in bitacoras if b.get('equipo_id') == equipo.get('_id')]
                 if bitacoras_equipo:
-                    pdf.ln(2)
-                    pdf.set_font("DejaVu", "B", 9)
+                    pdf.ln(3)
+                    pdf.set_font("DejaVu", "B", 10)
                     pdf.set_text_color(16, 185, 129)
-                    pdf.cell(0, 5, f"🔧 Mantenimientos ({len(bitacoras_equipo)}):", 0, 1)
-                    pdf.set_font("DejaVu", "", 8)
-                    pdf.set_text_color(51, 65, 85)
-                    for bit in bitacoras_equipo[:5]:  # Primeros 5
-                        fecha_str = "N/A"
-                        if bit.get('fecha'):
-                            try:
-                                dt = datetime.fromisoformat(str(bit['fecha']).replace('Z', '+00:00'))
-                                fecha_str = dt.strftime('%d/%m/%Y')
-                            except:
-                                pass
-                        pdf.cell(0, 4, f"  • {fecha_str} - {bit.get('tipo', '')} - {bit.get('estado', '')}", 0, 1)
+                    pdf.cell(0, 6, f"🔧 HISTORIAL DE MANTENIMIENTOS ({len(bitacoras_equipo)})", 0, 1)
+                    pdf.ln(2)
                     
-                    if len(bitacoras_equipo) > 5:
-                        pdf.set_text_color(100, 116, 139)
-                        pdf.cell(0, 4, f"  ... y {len(bitacoras_equipo) - 5} más", 0, 1)
+                    # Mostrar mantenimientos detallados
+                    self._add_mantenimientos_detallados_empresa(pdf, bitacoras_equipo)
                 
                 pdf.ln(3)
                 
