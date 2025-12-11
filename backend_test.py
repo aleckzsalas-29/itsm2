@@ -13,7 +13,7 @@ from typing import Dict, Any, List
 class ITSMBackendTester:
     def __init__(self):
         # Get backend URL from frontend .env
-        self.base_url = "https://itsm-feature-suite.preview.emergentagent.com/api"
+        self.base_url = "https://smart-itsm-2.preview.emergentagent.com/api"
         self.token = None
         self.test_results = []
         self.empresa_id = None
