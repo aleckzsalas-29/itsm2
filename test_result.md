@@ -225,9 +225,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Custom Fields Configuration API"
-    - "Equipment CRUD with Custom Fields"
-    - "Custom Fields Validation"
+    - "PDF Reports - Empresa Templates"
+    - "PDF Reports - Bitacoras Templates"
+    - "PDF File Generation and Storage"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
