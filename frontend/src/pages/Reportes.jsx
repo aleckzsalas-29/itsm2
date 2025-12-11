@@ -41,7 +41,7 @@ export default function Reportes() {
 
     setLoading(true);
     try {
-      const response = await api.get(`/reportes/empresa/${selectedEmpresa}`);
+      const response = await api.get(`/reportes/empresa/${selectedEmpresa}?template=${selectedTemplate}`);
       toast.success('Reporte generado exitosamente', {
         description: 'Se ha enviado una notificación por email'
       });
