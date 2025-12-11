@@ -262,18 +262,44 @@ class PDFService:
         self._add_field_row(pdf, "Número de Serie:", equipo.get('numero_serie', 'N/A'))
         pdf.ln(3)
         
-        # Bloque 2: Especificaciones Técnicas
+        # Bloque 2: Información de Compra y Garantía
         pdf.set_font("DejaVu", "B", 10)
-        pdf.cell(0, 6, "ESPECIFICACIONES TÉCNICAS", 0, 1, "L", True)
+        pdf.cell(0, 6, "INFORMACIÓN DE COMPRA Y GARANTÍA", 0, 1, "L", True)
         pdf.ln(1)
         pdf.set_font("DejaVu", "", 9)
-        self._add_field_row(pdf, "Procesador:", equipo.get('procesador', 'N/A'))
-        self._add_field_row(pdf, "Memoria RAM:", equipo.get('memoria_ram', 'N/A'))
-        self._add_field_row(pdf, "Disco Duro:", equipo.get('disco_duro', 'N/A'))
-        self._add_field_row(pdf, "Espacio Disponible:", equipo.get('espacio_disponible', 'N/A'))
-        if equipo.get('componentes'):
-            self._add_field_row(pdf, "Componentes:", equipo.get('componentes', ''))
+        if equipo.get('fecha_compra'):
+            try:
+                fecha = datetime.fromisoformat(str(equipo.get('fecha_compra')))
+                self._add_field_row(pdf, "Fecha de Compra:", fecha.strftime('%d/%m/%Y'))
+            except:
+                self._add_field_row(pdf, "Fecha de Compra:", equipo.get('fecha_compra', 'N/A'))
+        if equipo.get('garantia_hasta'):
+            try:
+                fecha = datetime.fromisoformat(str(equipo.get('garantia_hasta')))
+                self._add_field_row(pdf, "Garantía Hasta:", fecha.strftime('%d/%m/%Y'))
+            except:
+                self._add_field_row(pdf, "Garantía Hasta:", equipo.get('garantia_hasta', 'N/A'))
+        if equipo.get('proveedor'):
+            self._add_field_row(pdf, "Proveedor:", equipo.get('proveedor', 'N/A'))
+        if equipo.get('valor_compra'):
+            self._add_field_row(pdf, "Valor de Compra:", equipo.get('valor_compra', 'N/A'))
         pdf.ln(3)
+        
+        # Bloque 3: Configuración de Red
+        if equipo.get('direccion_mac') or equipo.get('direccion_ip') or equipo.get('hostname'):
+            pdf.set_font("DejaVu", "B", 10)
+            pdf.cell(0, 6, "CONFIGURACIÓN DE RED", 0, 1, "L", True)
+            pdf.ln(1)
+            pdf.set_font("DejaVu", "", 9)
+            if equipo.get('direccion_mac'):
+                self._add_field_row(pdf, "Dirección MAC:", equipo.get('direccion_mac', 'N/A'))
+            if equipo.get('direccion_ip'):
+                self._add_field_row(pdf, "Dirección IP:", equipo.get('direccion_ip', 'N/A'))
+            if equipo.get('hostname'):
+                self._add_field_row(pdf, "Hostname:", equipo.get('hostname', 'N/A'))
+            if equipo.get('sistema_operativo'):
+                self._add_field_row(pdf, "Sistema Operativo:", equipo.get('sistema_operativo', 'N/A'))
+            pdf.ln(3)
         
         # Bloque 3: Ubicación y Estado
         pdf.set_font("DejaVu", "B", 10)
