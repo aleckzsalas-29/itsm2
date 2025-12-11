@@ -208,7 +208,12 @@ export default function Equipos() {
       componentes: equipo.componentes || '',
       notas: equipo.notas || '',
       campos_personalizados: equipo.campos_personalizados || {},
+      campos_dinamicos: equipo.campos_dinamicos || {},
     });
+    // Cargar campos dinámicos para el tipo de equipo
+    if (equipo.tipo) {
+      fetchCamposDinamicos(equipo.tipo);
+    }
     setDialogOpen(true);
   };
 
