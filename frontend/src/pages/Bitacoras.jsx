@@ -120,7 +120,7 @@ export default function Bitacoras() {
     }
 
     try {
-      const response = await api.get(`/bitacoras/exportar-pdf?empresa_id=${selectedEmpresa}&periodo=${periodo}`);
+      const response = await api.get(`/bitacoras/exportar-pdf?empresa_id=${selectedEmpresa}&periodo=${periodo}&template=${selectedTemplate}`);
       
       if (response.data.filename) {
         const downloadUrl = `${api.defaults.baseURL}/reportes/download/${response.data.filename}`;
