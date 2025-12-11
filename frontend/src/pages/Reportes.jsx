@@ -142,7 +142,7 @@ export default function Reportes() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-slate-600" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Genera un reporte detallado de un equipo específico con su historial de mantenimiento.
+              Genera un reporte detallado de un equipo específico con toda la información técnica y su historial completo de mantenimientos (preventivo y correctivo).
             </p>
             <div className="space-y-2">
               <Label>Seleccionar Equipo</Label>
@@ -159,6 +159,37 @@ export default function Reportes() {
                       {equipo.nombre} - {equipo.tipo}
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Plantilla de Diseño</Label>
+              <Select
+                value={selectedTemplate}
+                onValueChange={setSelectedTemplate}
+              >
+                <SelectTrigger className="rounded-sm" data-testid="template-select">
+                  <SelectValue placeholder="Seleccionar plantilla" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="moderna">
+                    <div className="flex flex-col">
+                      <span className="font-semibold">Moderna</span>
+                      <span className="text-xs text-slate-500">Bloques con colores, íconos y diseño atractivo</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="clasica">
+                    <div className="flex flex-col">
+                      <span className="font-semibold">Clásica</span>
+                      <span className="text-xs text-slate-500">Formato tradicional con tablas y bordes</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="minimalista">
+                    <div className="flex flex-col">
+                      <span className="font-semibold">Minimalista</span>
+                      <span className="text-xs text-slate-500">Diseño limpio con espacios amplios</span>
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
