@@ -961,8 +961,12 @@ Email: {empresa.get('email', 'N/A')}""")
     
     def generate_bitacoras_report(self, bitacoras: List[Dict], empresa_nombre: str = None, 
                                    logo_path: str = None, sistema_nombre: str = "Sistema ITSM",
-                                   campos_seleccionados: List[str] = None):
-        """Generar reporte PDF de bitácoras con campos seleccionables"""
+                                   campos_seleccionados: List[str] = None,
+                                   template: str = "moderna"):
+        """
+        Generar reporte PDF de bitácoras con plantillas seleccionables
+        template: 'moderna', 'clasica', 'minimalista'
+        """
         
         titulo = f"Reporte de Bitácoras"
         if empresa_nombre:
@@ -971,71 +975,17 @@ Email: {empresa.get('email', 'N/A')}""")
         pdf = ITSMReportPDF(titulo=titulo, logo_path=logo_path, sistema_nombre=sistema_nombre)
         pdf.add_page()
         
-        # Definir todos los campos disponibles
-        campos_disponibles = {
-            'fecha': 'Fecha',
-            'equipo': 'Equipo',
-            'tipo': 'Tipo',
-            'descripcion': 'Descripción',
-            'tecnico': 'Técnico',
-            'estado': 'Estado',
-            'observaciones': 'Observaciones',
-            'tiempo_estimado': 'Tiempo Est.',
-            'tiempo_real': 'Tiempo Real'
-        }
-        
-        # Si no se especifican campos, usar todos
-        if not campos_seleccionados:
-            campos_seleccionados = list(campos_disponibles.keys())
-        
-        # Filtrar solo campos válidos
-        campos_a_mostrar = {k: v for k, v in campos_disponibles.items() if k in campos_seleccionados}
-        
         if not bitacoras:
             pdf.set_font("DejaVu", "I", 10)
             pdf.cell(0, 10, "No hay bitácoras para mostrar", 0, 1, "C")
         else:
-            # Título de sección
-            pdf.set_font("DejaVu", "B", 12)
-            pdf.set_text_color(15, 23, 42)
-            pdf.cell(0, 8, f"Total de Bitácoras: {len(bitacoras)}", 0, 1)
-            pdf.ln(3)
-            
-            # Crear tabla con campos seleccionados
-            pdf.set_font("DejaVu", "B", 8)
-            pdf.set_fill_color(241, 245, 249)
-            pdf.set_text_color(51, 65, 85)
-            
-            # Calcular anchos de columna dinámicamente
-            num_campos = len(campos_a_mostrar)
-            col_width = (pdf.PAGE_WIDTH - 2 * pdf.MARGIN) / num_campos
-            
-            # Headers
-            for campo, titulo in campos_a_mostrar.items():
-                pdf.cell(col_width, 7, titulo, 1, 0, "C", True)
-            pdf.ln()
-            
-            # Datos
-            pdf.set_font("DejaVu", "", 7)
-            for bitacora in bitacoras:
-                for campo in campos_a_mostrar.keys():
-                    value = bitacora.get(campo, 'N/A')
-                    
-                    # Formatear según tipo
-                    if campo == 'fecha' and value != 'N/A':
-                        if isinstance(value, str):
-                            try:
-                                dt = datetime.fromisoformat(value.replace('Z', '+00:00'))
-                                value = dt.strftime('%d/%m/%Y')
-                            except:
-                                pass
-                    elif campo in ['tiempo_estimado', 'tiempo_real']:
-                        value = f"{value} min" if value and value != 'N/A' else 'N/A'
-                    elif campo == 'descripcion' and len(str(value)) > 30:
-                        value = str(value)[:27] + '...'
-                    
-                    pdf.cell(col_width, 6, str(value), 1, 0, "C")
-                pdf.ln()
+            # Aplicar estilos según template
+            if template == "clasica":
+                self._generar_bitacoras_clasico(pdf, bitacoras, empresa_nombre)
+            elif template == "minimalista":
+                self._generar_bitacoras_minimalista(pdf, bitacoras, empresa_nombre)
+            else:  # moderna (default)
+                self._generar_bitacoras_moderno(pdf, bitacoras, empresa_nombre)
         
         filename = f"bitacoras_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         filepath = os.path.join(self.output_dir, filename)
