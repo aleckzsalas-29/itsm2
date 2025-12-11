@@ -566,6 +566,18 @@ class PDFService:
             self._add_field_row(pdf, "Técnico:", bitacora.get('tecnico', 'N/A'))
             self._add_field_row(pdf, "Estado:", bitacora.get('estado', 'N/A'))
             
+            # Fecha de revisión
+            if bitacora.get('fecha_revision'):
+                try:
+                    if isinstance(bitacora['fecha_revision'], str):
+                        dt = datetime.fromisoformat(bitacora['fecha_revision'].replace('Z', '+00:00'))
+                    else:
+                        dt = bitacora['fecha_revision']
+                    fecha_rev_str = dt.strftime('%d/%m/%Y')
+                    self._add_field_row(pdf, "Fecha de Revisión:", fecha_rev_str)
+                except:
+                    pass
+            
             if bitacora.get('tiempo_estimado') or bitacora.get('tiempo_real'):
                 tiempo_est = f"{bitacora.get('tiempo_estimado', 'N/A')} min"
                 tiempo_real = f"{bitacora.get('tiempo_real', 'N/A')} min"
