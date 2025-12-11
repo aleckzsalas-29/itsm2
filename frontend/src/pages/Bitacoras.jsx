@@ -294,7 +294,7 @@ export default function Bitacoras() {
           </div>
           <div>
             <Label className="text-sm font-medium text-slate-700 mb-2 block">Exportar Bitácoras</Label>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex gap-2">
                 <span className="text-xs text-slate-600 font-medium">CSV:</span>
                 <Button onClick={() => handleExport('dia')} variant="outline" size="sm" className="rounded-sm">
@@ -306,6 +306,25 @@ export default function Bitacoras() {
                 <Button onClick={() => handleExport('mes')} variant="outline" size="sm" className="rounded-sm">
                   <Download className="mr-1 h-3 w-3" /> Mes
                 </Button>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-600">Plantilla PDF:</Label>
+                <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                  <SelectTrigger className="rounded-sm h-8 text-xs">
+                    <SelectValue placeholder="Seleccionar plantilla" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="moderna">
+                      <span className="font-semibold">Moderna</span> - Bloques con colores e íconos
+                    </SelectItem>
+                    <SelectItem value="clasica">
+                      <span className="font-semibold">Clásica</span> - Formato tradicional con tablas
+                    </SelectItem>
+                    <SelectItem value="minimalista">
+                      <span className="font-semibold">Minimalista</span> - Diseño limpio
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex gap-2">
                 <span className="text-xs text-slate-600 font-medium">PDF:</span>
