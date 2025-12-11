@@ -71,6 +71,7 @@ class Equipo(BaseModel):
     creado_en: datetime = Field(default_factory=datetime.utcnow)
     actualizado_en: datetime = Field(default_factory=datetime.utcnow)
     campos_personalizados: Dict[str, Any] = Field(default_factory=dict)
+    campos_dinamicos: Dict[str, Any] = Field(default_factory=dict)
     
     class Config:
         populate_by_name = True
