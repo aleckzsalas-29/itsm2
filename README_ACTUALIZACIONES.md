@@ -309,8 +309,9 @@ cd /opt/itsm_backups && ls -t | tail -n +11 | xargs rm -rf
 Tu sistema ITSM ahora tiene:
 - ✅ Historial de equipos en modal
 - ✅ Reportes PDF profesionales con 3 plantillas
-- ✅ Campos dinámicos por tipo de equipo
+- ✅ Campos dinámicos por tipo de equipo (12 tipos)
 - ✅ Fecha de revisión en bitácoras
+- ✅ Campos optimizados en equipos (8 campos nuevos únicos)
 - ✅ Sistema de actualización automatizado
 - ✅ Rollback automático
 
