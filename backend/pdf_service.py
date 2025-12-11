@@ -853,28 +853,54 @@ Email: {empresa.get('email', 'N/A')}""")
         pdf.cell(0, 5, f"Total de Mantenimientos: {len(bitacoras)}", 0, 1)
         pdf.ln(5)
         
-        # Tabla de equipos
+        # Detalle de equipos con historial de mantenimientos
         if equipos:
-            pdf.set_font("DejaVu", "B", 10)
-            pdf.cell(0, 8, "EQUIPOS", 0, 1)
-            pdf.ln(2)
+            pdf.set_font("DejaVu", "B", 11)
+            pdf.cell(0, 8, "EQUIPOS Y MANTENIMIENTOS", 0, 1)
+            pdf.ln(3)
             
-            # Encabezado
-            pdf.set_font("DejaVu", "B", 8)
-            pdf.set_fill_color(200, 200, 200)
-            pdf.cell(60, 6, "Nombre", 1, 0, "L", True)
-            pdf.cell(30, 6, "Tipo", 1, 0, "L", True)
-            pdf.cell(40, 6, "Marca/Modelo", 1, 0, "L", True)
-            pdf.cell(30, 6, "Estado", 1, 1, "L", True)
-            
-            # Datos
-            pdf.set_font("DejaVu", "", 7)
-            for equipo in equipos:
-                pdf.cell(60, 5, str(equipo.get('nombre', ''))[:30], 1, 0, "L")
-                pdf.cell(30, 5, str(equipo.get('tipo', ''))[:15], 1, 0, "L")
-                marca_modelo = f"{equipo.get('marca', '')} {equipo.get('modelo', '')}"[:25]
-                pdf.cell(40, 5, marca_modelo, 1, 0, "L")
-                pdf.cell(30, 5, str(equipo.get('estado', ''))[:15], 1, 1, "L")
+            for idx, equipo in enumerate(equipos, 1):
+                # Información del equipo
+                pdf.set_font("DejaVu", "B", 10)
+                pdf.cell(50, 6, "Campo", 1, 0, "L")
+                pdf.cell(0, 6, "Valor", 1, 1, "L")
+                
+                pdf.set_font("DejaVu", "", 9)
+                campos_equipo = [
+                    ("Equipo", equipo.get('nombre', 'N/A')),
+                    ("Tipo", equipo.get('tipo', 'N/A')),
+                    ("Marca", equipo.get('marca', 'N/A')),
+                    ("Modelo", equipo.get('modelo', 'N/A')),
+                    ("Serie", equipo.get('numero_serie', 'N/A')),
+                    ("Ubicación", equipo.get('ubicacion', 'N/A')),
+                    ("Estado", equipo.get('estado', 'N/A')),
+                ]
+                
+                for campo, valor in campos_equipo:
+                    pdf.cell(50, 5, campo, 1, 0, "L")
+                    pdf.cell(0, 5, str(valor), 1, 1, "L")
+                
+                pdf.ln(3)
+                
+                # Historial de mantenimientos de este equipo
+                bitacoras_equipo = [b for b in bitacoras if b.get('equipo_id') == equipo.get('_id')]
+                if bitacoras_equipo:
+                    pdf.set_font("DejaVu", "B", 10)
+                    pdf.cell(0, 6, f"Historial de Mantenimientos ({len(bitacoras_equipo)})", 0, 1)
+                    pdf.ln(2)
+                    
+                    self._add_mantenimientos_tabla_simple(pdf, bitacoras_equipo)
+                    pdf.ln(5)
+                
+                # Separador entre equipos
+                if idx < len(equipos):
+                    pdf.set_draw_color(0, 0, 0)
+                    pdf.line(pdf.MARGIN, pdf.get_y(), pdf.PAGE_WIDTH - pdf.MARGIN, pdf.get_y())
+                    pdf.ln(5)
+                
+                # Nueva página cada 2 equipos
+                if idx % 2 == 0 and idx < len(equipos):
+                    pdf.add_page()
     
     def _generar_empresa_minimalista(self, pdf: ITSMReportPDF, empresa: Dict, equipos: List[Dict], bitacoras: List[Dict]):
         """Template minimalista para reporte de empresa"""
