@@ -1,0 +1,625 @@
+#!/usr/bin/env python3
+"""
+Backend Testing Suite for PDF Reports Functionality
+Testing the ITSM system's PDF report generation with templates
+"""
+
+import requests
+import json
+import os
+from datetime import datetime
+from typing import Dict, Any, List
+
+class ITSMBackendTester:
+    def __init__(self):
+        # Get backend URL from frontend .env
+        self.base_url = "https://smart-itsm-2.preview.emergentagent.com/api"
+        self.token = None
+        self.test_results = []
+        self.empresa_id = "6933cc2e9798f84094ba851b"  # Test empresa ID provided
+        self.equipo_id = None
+        
+    def log_result(self, test_name: str, success: bool, message: str, details: Dict = None):
+        """Log test result"""
+        result = {
+            "test": test_name,
+            "success": success,
+            "message": message,
+            "timestamp": datetime.now().isoformat(),
+            "details": details or {}
+        }
+        self.test_results.append(result)
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status}: {test_name} - {message}")
+        if details:
+            print(f"   Details: {details}")
+    
+    def make_request(self, method: str, endpoint: str, data: Dict = None, headers: Dict = None) -> Dict:
+        """Make HTTP request with error handling"""
+        url = f"{self.base_url}{endpoint}"
+        request_headers = {"Content-Type": "application/json"}
+        
+        if self.token:
+            request_headers["Authorization"] = f"Bearer {self.token}"
+        
+        if headers:
+            request_headers.update(headers)
+        
+        try:
+            if method.upper() == "GET":
+                response = requests.get(url, headers=request_headers, timeout=30)
+            elif method.upper() == "POST":
+                response = requests.post(url, json=data, headers=request_headers, timeout=30)
+            elif method.upper() == "PUT":
+                response = requests.put(url, json=data, headers=request_headers, timeout=30)
+            elif method.upper() == "DELETE":
+                response = requests.delete(url, headers=request_headers, timeout=30)
+            else:
+                raise ValueError(f"Unsupported method: {method}")
+            
+            return {
+                "status_code": response.status_code,
+                "data": response.json() if response.content else {},
+                "success": 200 <= response.status_code < 300
+            }
+        except requests.exceptions.RequestException as e:
+            return {
+                "status_code": 0,
+                "data": {"error": str(e)},
+                "success": False
+            }
+        except json.JSONDecodeError:
+            return {
+                "status_code": response.status_code,
+                "data": {"error": "Invalid JSON response"},
+                "success": False
+            }
+    
+    def test_authentication(self):
+        """Test 1: Authentication with admin credentials"""
+        print("\n=== Testing Authentication ===")
+        
+        login_data = {
+            "email": "admin@itsm.com",
+            "password": "admin123"
+        }
+        
+        result = self.make_request("POST", "/auth/login", login_data)
+        
+        if result["success"] and "token" in result["data"]:
+            self.token = result["data"]["token"]
+            user_info = result["data"].get("usuario", {})
+            self.log_result(
+                "Authentication", 
+                True, 
+                f"Successfully logged in as {user_info.get('nombre', 'Unknown')}",
+                {"user_role": user_info.get("rol"), "user_email": user_info.get("email")}
+            )
+            return True
+        else:
+            self.log_result(
+                "Authentication", 
+                False, 
+                f"Login failed: {result['data'].get('error', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return False
+    
+    def test_empresa_report_moderna(self):
+        """Test 2: Generate empresa report with moderna template"""
+        print("\n=== Testing Empresa Report - Moderna Template ===")
+        
+        result = self.make_request("GET", f"/reportes/empresa/{self.empresa_id}?template=moderna")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Empresa Report - Moderna", 
+                    True, 
+                    "Successfully generated empresa report with moderna template",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return response_data["filename"]
+            else:
+                self.log_result(
+                    "Empresa Report - Moderna", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return None
+        else:
+            self.log_result(
+                "Empresa Report - Moderna", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return None
+    
+    def test_empresa_report_clasica(self):
+        """Test 3: Generate empresa report with clasica template"""
+        print("\n=== Testing Empresa Report - Clasica Template ===")
+        
+        result = self.make_request("GET", f"/reportes/empresa/{self.empresa_id}?template=clasica")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Empresa Report - Clasica", 
+                    True, 
+                    "Successfully generated empresa report with clasica template",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return response_data["filename"]
+            else:
+                self.log_result(
+                    "Empresa Report - Clasica", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return None
+        else:
+            self.log_result(
+                "Empresa Report - Clasica", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return None
+    
+    def test_empresa_report_minimalista(self):
+        """Test 4: Generate empresa report with minimalista template"""
+        print("\n=== Testing Empresa Report - Minimalista Template ===")
+        
+        result = self.make_request("GET", f"/reportes/empresa/{self.empresa_id}?template=minimalista")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Empresa Report - Minimalista", 
+                    True, 
+                    "Successfully generated empresa report with minimalista template",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return response_data["filename"]
+            else:
+                self.log_result(
+                    "Empresa Report - Minimalista", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return None
+        else:
+            self.log_result(
+                "Empresa Report - Minimalista", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return None
+    
+    def test_bitacoras_report_moderna_mes(self):
+        """Test 5: Generate bitacoras report with moderna template and mes period"""
+        print("\n=== Testing Bitacoras Report - Moderna Template (Mes) ===")
+        
+        result = self.make_request("GET", f"/bitacoras/exportar-pdf?empresa_id={self.empresa_id}&periodo=mes&template=moderna")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Bitacoras Report - Moderna (Mes)", 
+                    True, 
+                    "Successfully generated bitacoras report with moderna template for mes period",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return response_data["filename"]
+            else:
+                self.log_result(
+                    "Bitacoras Report - Moderna (Mes)", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return None
+        else:
+            self.log_result(
+                "Bitacoras Report - Moderna (Mes)", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return None
+    
+    def test_bitacoras_report_clasica_semana(self):
+        """Test 6: Generate bitacoras report with clasica template and semana period"""
+        print("\n=== Testing Bitacoras Report - Clasica Template (Semana) ===")
+        
+        result = self.make_request("GET", f"/bitacoras/exportar-pdf?empresa_id={self.empresa_id}&periodo=semana&template=clasica")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Bitacoras Report - Clasica (Semana)", 
+                    True, 
+                    "Successfully generated bitacoras report with clasica template for semana period",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return response_data["filename"]
+            else:
+                self.log_result(
+                    "Bitacoras Report - Clasica (Semana)", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return None
+        else:
+            self.log_result(
+                "Bitacoras Report - Clasica (Semana)", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return None
+    
+    def test_bitacoras_report_minimalista_dia(self):
+        """Test 7: Generate bitacoras report with minimalista template and dia period"""
+        print("\n=== Testing Bitacoras Report - Minimalista Template (Dia) ===")
+        
+        result = self.make_request("GET", f"/bitacoras/exportar-pdf?empresa_id={self.empresa_id}&periodo=dia&template=minimalista")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Bitacoras Report - Minimalista (Dia)", 
+                    True, 
+                    "Successfully generated bitacoras report with minimalista template for dia period",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return response_data["filename"]
+            else:
+                self.log_result(
+                    "Bitacoras Report - Minimalista (Dia)", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return None
+        else:
+            self.log_result(
+                "Bitacoras Report - Minimalista (Dia)", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return None
+    
+    def test_verify_pdf_files_exist(self):
+        """Test 8: Verify that PDF files are generated in the backend/pdfs directory"""
+        print("\n=== Testing PDF Files Existence ===")
+        
+        # Check if pdfs directory exists and has files
+        try:
+            import subprocess
+            result = subprocess.run(['ls', '-la', '/app/backend/pdfs/'], capture_output=True, text=True)
+            
+            if result.returncode == 0:
+                files = result.stdout.strip().split('\n')
+                pdf_files = [f for f in files if '.pdf' in f]
+                
+                if len(pdf_files) > 2:  # More than just . and ..
+                    self.log_result(
+                        "PDF Files Existence", 
+                        True, 
+                        f"Found {len(pdf_files)} PDF files in /app/backend/pdfs/",
+                        {"files": pdf_files[:5]}  # Show first 5 files
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "PDF Files Existence", 
+                        False, 
+                        "No PDF files found in /app/backend/pdfs/",
+                        {"directory_content": files}
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "PDF Files Existence", 
+                    False, 
+                    "Could not access /app/backend/pdfs/ directory",
+                    {"error": result.stderr}
+                )
+                return False
+        except Exception as e:
+            self.log_result(
+                "PDF Files Existence", 
+                False, 
+                f"Exception checking PDF files: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+    
+    def test_verify_pdf_file_sizes(self):
+        """Test 9: Verify that generated PDF files have size > 0 bytes"""
+        print("\n=== Testing PDF File Sizes ===")
+        
+        try:
+            import subprocess
+            result = subprocess.run(['find', '/app/backend/pdfs/', '-name', '*.pdf', '-exec', 'ls', '-l', '{}', ';'], 
+                                  capture_output=True, text=True)
+            
+            if result.returncode == 0:
+                files_info = result.stdout.strip().split('\n')
+                valid_files = 0
+                invalid_files = 0
+                
+                for file_info in files_info:
+                    if file_info and '.pdf' in file_info:
+                        parts = file_info.split()
+                        if len(parts) >= 5:
+                            try:
+                                file_size = int(parts[4])
+                                if file_size > 0:
+                                    valid_files += 1
+                                else:
+                                    invalid_files += 1
+                            except:
+                                pass
+                
+                if valid_files > 0 and invalid_files == 0:
+                    self.log_result(
+                        "PDF File Sizes", 
+                        True, 
+                        f"All {valid_files} PDF files have valid size > 0 bytes",
+                        {"valid_files": valid_files}
+                    )
+                    return True
+                else:
+                    self.log_result(
+                        "PDF File Sizes", 
+                        False, 
+                        f"Found {invalid_files} files with 0 bytes, {valid_files} valid files",
+                        {"valid_files": valid_files, "invalid_files": invalid_files}
+                    )
+                    return False
+            else:
+                self.log_result(
+                    "PDF File Sizes", 
+                    False, 
+                    "Could not check PDF file sizes",
+                    {"error": result.stderr}
+                )
+                return False
+        except Exception as e:
+            self.log_result(
+                "PDF File Sizes", 
+                False, 
+                f"Exception checking PDF file sizes: {str(e)}",
+                {"exception_type": type(e).__name__}
+            )
+            return False
+    
+    def test_empresa_report_invalid_id(self):
+        """Test 10: Test empresa report with invalid empresa_id"""
+        print("\n=== Testing Empresa Report - Invalid ID ===")
+        
+        invalid_id = "invalid_empresa_id_123"
+        result = self.make_request("GET", f"/reportes/empresa/{invalid_id}?template=moderna")
+        
+        if not result["success"] and result["status_code"] == 404:
+            self.log_result(
+                "Empresa Report - Invalid ID", 
+                True, 
+                "Correctly rejected invalid empresa_id with 404 error",
+                {"error_message": result["data"].get("detail", "Unknown error")}
+            )
+            return True
+        else:
+            self.log_result(
+                "Empresa Report - Invalid ID", 
+                False, 
+                "Should have rejected invalid empresa_id with 404",
+                {"status_code": result["status_code"], "response": result["data"]}
+            )
+            return False
+    
+    def test_empresa_report_invalid_template(self):
+        """Test 11: Test empresa report with invalid template (should default to moderna)"""
+        print("\n=== Testing Empresa Report - Invalid Template ===")
+        
+        result = self.make_request("GET", f"/reportes/empresa/{self.empresa_id}?template=invalid_template")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Empresa Report - Invalid Template", 
+                    True, 
+                    "Successfully generated report with invalid template (defaulted to moderna)",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return True
+            else:
+                self.log_result(
+                    "Empresa Report - Invalid Template", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return False
+        else:
+            self.log_result(
+                "Empresa Report - Invalid Template", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return False
+    
+    def test_empresa_report_no_template(self):
+        """Test 12: Test empresa report without template parameter (should default to moderna)"""
+        print("\n=== Testing Empresa Report - No Template Parameter ===")
+        
+        result = self.make_request("GET", f"/reportes/empresa/{self.empresa_id}")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Empresa Report - No Template", 
+                    True, 
+                    "Successfully generated report without template parameter (defaulted to moderna)",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return True
+            else:
+                self.log_result(
+                    "Empresa Report - No Template", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return False
+        else:
+            self.log_result(
+                "Empresa Report - No Template", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return False
+    
+    def test_bitacoras_report_invalid_empresa_id(self):
+        """Test 13: Test bitacoras report with invalid empresa_id"""
+        print("\n=== Testing Bitacoras Report - Invalid Empresa ID ===")
+        
+        invalid_id = "invalid_empresa_id_123"
+        result = self.make_request("GET", f"/bitacoras/exportar-pdf?empresa_id={invalid_id}&periodo=mes&template=moderna")
+        
+        if not result["success"] and result["status_code"] == 404:
+            self.log_result(
+                "Bitacoras Report - Invalid Empresa ID", 
+                True, 
+                "Correctly rejected invalid empresa_id with 404 error",
+                {"error_message": result["data"].get("detail", "Unknown error")}
+            )
+            return True
+        else:
+            self.log_result(
+                "Bitacoras Report - Invalid Empresa ID", 
+                False, 
+                "Should have rejected invalid empresa_id with 404",
+                {"status_code": result["status_code"], "response": result["data"]}
+            )
+            return False
+    
+    def test_bitacoras_report_invalid_template(self):
+        """Test 14: Test bitacoras report with invalid template (should default to moderna)"""
+        print("\n=== Testing Bitacoras Report - Invalid Template ===")
+        
+        result = self.make_request("GET", f"/bitacoras/exportar-pdf?empresa_id={self.empresa_id}&periodo=mes&template=invalid_template")
+        
+        if result["success"]:
+            response_data = result["data"]
+            if "filename" in response_data:
+                self.log_result(
+                    "Bitacoras Report - Invalid Template", 
+                    True, 
+                    "Successfully generated bitacoras report with invalid template (defaulted to moderna)",
+                    {"filename": response_data["filename"], "message": response_data.get("message")}
+                )
+                return True
+            else:
+                self.log_result(
+                    "Bitacoras Report - Invalid Template", 
+                    False, 
+                    "Response missing filename",
+                    {"response": response_data}
+                )
+                return False
+        else:
+            self.log_result(
+                "Bitacoras Report - Invalid Template", 
+                False, 
+                f"Failed to generate report: {result['data'].get('detail', 'Unknown error')}",
+                {"status_code": result["status_code"]}
+            )
+            return False
+    
+    def run_all_tests(self):
+        """Run all PDF report tests in sequence"""
+        print("🚀 Starting ITSM PDF Reports Backend Testing Suite")
+        print("=" * 60)
+        
+        # Authentication is required for all other tests
+        if not self.test_authentication():
+            print("\n❌ Authentication failed. Cannot proceed with other tests.")
+            return False
+        
+        # Run all PDF report tests
+        tests = [
+            self.test_empresa_report_moderna,
+            self.test_empresa_report_clasica,
+            self.test_empresa_report_minimalista,
+            self.test_bitacoras_report_moderna_mes,
+            self.test_bitacoras_report_clasica_semana,
+            self.test_bitacoras_report_minimalista_dia,
+            self.test_verify_pdf_files_exist,
+            self.test_verify_pdf_file_sizes,
+            self.test_empresa_report_invalid_id,
+            self.test_empresa_report_invalid_template,
+            self.test_empresa_report_no_template,
+            self.test_bitacoras_report_invalid_empresa_id,
+            self.test_bitacoras_report_invalid_template
+        ]
+        
+        for test in tests:
+            try:
+                test()
+            except Exception as e:
+                self.log_result(
+                    test.__name__, 
+                    False, 
+                    f"Test failed with exception: {str(e)}",
+                    {"exception_type": type(e).__name__}
+                )
+        
+        # Summary
+        print("\n" + "=" * 60)
+        print("📊 TEST SUMMARY")
+        print("=" * 60)
+        
+        passed = sum(1 for result in self.test_results if result["success"])
+        total = len(self.test_results)
+        
+        print(f"Total Tests: {total}")
+        print(f"Passed: {passed}")
+        print(f"Failed: {total - passed}")
+        print(f"Success Rate: {(passed/total)*100:.1f}%")
+        
+        if total - passed > 0:
+            print("\n❌ FAILED TESTS:")
+            for result in self.test_results:
+                if not result["success"]:
+                    print(f"  - {result['test']}: {result['message']}")
+        
+        return passed == total
+
+if __name__ == "__main__":
+    tester = ITSMBackendTester()
+    success = tester.run_all_tests()
+    
+    if success:
+        print("\n🎉 All tests passed! PDF reports functionality is working correctly.")
+    else:
+        print("\n⚠️  Some tests failed. Please check the results above.")
