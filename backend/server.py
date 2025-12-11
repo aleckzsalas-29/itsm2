@@ -777,7 +777,17 @@ async def exportar_bitacoras_pdf(
             "estado": bitacora["estado"],
             "observaciones": bitacora.get("observaciones", ""),
             "tiempo_estimado": bitacora.get("tiempo_estimado"),
-            "tiempo_real": bitacora.get("tiempo_real")
+            "tiempo_real": bitacora.get("tiempo_real"),
+            "fecha_revision": bitacora.get("fecha_revision"),
+            "limpieza_fisica": bitacora.get("limpieza_fisica", False),
+            "actualizacion_software": bitacora.get("actualizacion_software", False),
+            "revision_hardware": bitacora.get("revision_hardware", False),
+            "respaldo_datos": bitacora.get("respaldo_datos", False),
+            "optimizacion_sistema": bitacora.get("optimizacion_sistema", False),
+            "diagnostico_problema": bitacora.get("diagnostico_problema", ""),
+            "solucion_aplicada": bitacora.get("solucion_aplicada", ""),
+            "componentes_reemplazados": bitacora.get("componentes_reemplazados", ""),
+            "anotaciones_extras": bitacora.get("anotaciones_extras", "")
         })
     
     try:
