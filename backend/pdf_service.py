@@ -993,6 +993,104 @@ Email: {empresa.get('email', 'N/A')}""")
         
         return filename
     
+    def _generar_bitacoras_moderno(self, pdf: ITSMReportPDF, bitacoras: List[Dict], empresa_nombre: str = None):
+        """Template moderna para reporte de bitácoras"""
+        # Encabezado con estadísticas
+        pdf.set_fill_color(139, 92, 246)  # Púrpura moderno
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("DejaVu", "B", 14)
+        pdf.cell(0, 10, f"📋 BITÁCORAS DE MANTENIMIENTO", 0, 1, "L", True)
+        pdf.ln(3)
+        
+        if empresa_nombre:
+            pdf.set_text_color(51, 65, 85)
+            pdf.set_font("DejaVu", "", 9)
+            self._add_field_row(pdf, "Empresa:", empresa_nombre)
+            pdf.ln(2)
+        
+        # Resumen
+        pdf.set_fill_color(241, 245, 249)
+        pdf.set_font("DejaVu", "B", 10)
+        pdf.cell(0, 6, "RESUMEN", 0, 1, "L", True)
+        pdf.ln(1)
+        pdf.set_font("DejaVu", "", 9)
+        self._add_field_row(pdf, "Total de Bitácoras:", str(len(bitacoras)))
+        
+        # Estadísticas por tipo
+        tipos_count = {}
+        for bitacora in bitacoras:
+            tipo = bitacora.get('tipo', 'Sin tipo')
+            tipos_count[tipo] = tipos_count.get(tipo, 0) + 1
+        
+        if tipos_count:
+            tipos_str = ", ".join([f"{tipo}: {count}" for tipo, count in tipos_count.items()])
+            self._add_field_row(pdf, "Por Tipo:", tipos_str)
+        pdf.ln(5)
+        
+        # Bitácoras detalladas
+        pdf.set_fill_color(16, 185, 129)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("DejaVu", "B", 12)
+        pdf.cell(0, 10, f"🔧 DETALLE DE MANTENIMIENTOS", 0, 1, "L", True)
+        pdf.ln(5)
+        
+        self._add_mantenimientos_detallados(pdf, bitacoras)
+    
+    def _generar_bitacoras_clasico(self, pdf: ITSMReportPDF, bitacoras: List[Dict], empresa_nombre: str = None):
+        """Template clásico para reporte de bitácoras"""
+        # Título
+        pdf.set_font("DejaVu", "B", 14)
+        pdf.set_text_color(0, 0, 0)
+        titulo = "Reporte de Bitácoras"
+        if empresa_nombre:
+            titulo += f" - {empresa_nombre}"
+        pdf.cell(0, 10, titulo, 0, 1, "C")
+        pdf.ln(3)
+        
+        # Línea separadora
+        pdf.set_draw_color(0, 0, 0)
+        pdf.line(pdf.MARGIN, pdf.get_y(), pdf.PAGE_WIDTH - pdf.MARGIN, pdf.get_y())
+        pdf.ln(5)
+        
+        # Resumen
+        pdf.set_font("DejaVu", "B", 11)
+        pdf.cell(0, 8, "RESUMEN", 0, 1)
+        pdf.set_font("DejaVu", "", 9)
+        pdf.cell(0, 5, f"Total de Bitácoras: {len(bitacoras)}", 0, 1)
+        pdf.ln(5)
+        
+        # Tabla de bitácoras
+        pdf.set_font("DejaVu", "B", 10)
+        pdf.cell(0, 8, "LISTADO DE MANTENIMIENTOS", 0, 1)
+        pdf.ln(2)
+        
+        self._add_mantenimientos_tabla_simple(pdf, bitacoras)
+    
+    def _generar_bitacoras_minimalista(self, pdf: ITSMReportPDF, bitacoras: List[Dict], empresa_nombre: str = None):
+        """Template minimalista para reporte de bitácoras"""
+        # Título simple
+        pdf.set_font("DejaVu", "", 16)
+        pdf.set_text_color(51, 65, 85)
+        titulo = "Bitácoras"
+        if empresa_nombre:
+            titulo = f"{empresa_nombre} - Bitácoras"
+        pdf.cell(0, 12, titulo, 0, 1)
+        pdf.ln(3)
+        
+        # Resumen compacto
+        pdf.set_font("DejaVu", "", 9)
+        pdf.set_text_color(148, 163, 184)
+        pdf.cell(0, 6, f"{len(bitacoras)} registros de mantenimiento", 0, 1)
+        pdf.ln(8)
+        
+        # Lista minimalista de mantenimientos
+        pdf.set_font("DejaVu", "", 11)
+        pdf.set_text_color(71, 85, 105)
+        pdf.cell(0, 8, "Mantenimientos", 0, 1)
+        pdf.ln(2)
+        
+        self._add_mantenimientos_minimalista(pdf, bitacoras)
+    
     def generate_bitacoras_report_detailed(self, bitacoras: List[Dict], empresa_nombre: str = None, 
                                            logo_path: str = None, sistema_nombre: str = "Sistema ITSM"):
         """Generar reporte PDF detallado de bitácoras con todo el contenido"""
