@@ -13,6 +13,7 @@ export default function Reportes() {
   const [equipos, setEquipos] = useState([]);
   const [selectedEmpresa, setSelectedEmpresa] = useState('');
   const [selectedEquipo, setSelectedEquipo] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState('moderna');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
