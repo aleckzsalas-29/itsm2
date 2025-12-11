@@ -720,6 +720,215 @@ class PDFService:
             
             pdf.ln(2)
     
+    def _generar_empresa_moderno(self, pdf: ITSMReportPDF, empresa: Dict, equipos: List[Dict], bitacoras: List[Dict]):
+        """Template moderna para reporte de empresa"""
+        # Información de la empresa
+        pdf.set_fill_color(59, 130, 246)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("DejaVu", "B", 14)
+        pdf.cell(0, 10, f"🏢 {empresa.get('nombre', '')}", 0, 1, "L", True)
+        pdf.ln(3)
+        
+        # Datos de la empresa
+        pdf.set_text_color(51, 65, 85)
+        pdf.set_font("DejaVu", "", 9)
+        if empresa.get('direccion'):
+            self._add_field_row(pdf, "Dirección:", empresa.get('direccion', ''))
+        if empresa.get('telefono'):
+            self._add_field_row(pdf, "Teléfono:", empresa.get('telefono', ''))
+        if empresa.get('email'):
+            self._add_field_row(pdf, "Email:", empresa.get('email', ''))
+        pdf.ln(5)
+        
+        # Resumen estadístico
+        pdf.set_fill_color(241, 245, 249)
+        pdf.set_font("DejaVu", "B", 10)
+        pdf.cell(0, 6, "RESUMEN", 0, 1, "L", True)
+        pdf.ln(1)
+        pdf.set_font("DejaVu", "", 9)
+        self._add_field_row(pdf, "Total de Equipos:", str(len(equipos)))
+        self._add_field_row(pdf, "Total de Mantenimientos:", str(len(bitacoras)))
+        
+        # Equipos por tipo
+        tipos_count = {}
+        for equipo in equipos:
+            tipo = equipo.get('tipo', 'Sin tipo')
+            tipos_count[tipo] = tipos_count.get(tipo, 0) + 1
+        
+        if tipos_count:
+            self._add_field_row(pdf, "Tipos de Equipos:", ", ".join([f"{tipo}: {count}" for tipo, count in tipos_count.items()]))
+        pdf.ln(5)
+        
+        # Equipos detallados (uno por uno)
+        if equipos:
+            pdf.add_page()
+            pdf.set_fill_color(16, 185, 129)
+            pdf.set_text_color(255, 255, 255)
+            pdf.set_font("DejaVu", "B", 12)
+            pdf.cell(0, 10, f"💻 EQUIPOS DE LA EMPRESA ({len(equipos)})", 0, 1, "L", True)
+            pdf.ln(5)
+            
+            for idx, equipo in enumerate(equipos, 1):
+                # Título del equipo
+                pdf.set_fill_color(241, 245, 249)
+                pdf.set_text_color(51, 65, 85)
+                pdf.set_font("DejaVu", "B", 11)
+                pdf.cell(0, 8, f"#{idx} - {equipo.get('nombre', 'Sin nombre')}", 0, 1, "L", True)
+                pdf.ln(2)
+                
+                # Información básica del equipo
+                pdf.set_font("DejaVu", "", 9)
+                self._add_field_row(pdf, "Tipo:", equipo.get('tipo', 'N/A'))
+                self._add_field_row(pdf, "Marca:", equipo.get('marca', 'N/A'))
+                self._add_field_row(pdf, "Modelo:", equipo.get('modelo', 'N/A'))
+                self._add_field_row(pdf, "Serie:", equipo.get('numero_serie', 'N/A'))
+                self._add_field_row(pdf, "Ubicación:", equipo.get('ubicacion', 'N/A'))
+                self._add_field_row(pdf, "Estado:", equipo.get('estado', 'N/A'))
+                
+                # Campos adicionales si existen
+                if equipo.get('direccion_ip'):
+                    self._add_field_row(pdf, "IP:", equipo.get('direccion_ip', ''))
+                if equipo.get('hostname'):
+                    self._add_field_row(pdf, "Hostname:", equipo.get('hostname', ''))
+                if equipo.get('sistema_operativo'):
+                    self._add_field_row(pdf, "SO:", equipo.get('sistema_operativo', ''))
+                
+                # Campos dinámicos del equipo
+                if equipo.get('campos_dinamicos'):
+                    pdf.ln(1)
+                    pdf.set_font("DejaVu", "B", 9)
+                    pdf.set_text_color(71, 85, 105)
+                    pdf.cell(0, 5, "Especificaciones:", 0, 1)
+                    pdf.set_font("DejaVu", "", 8)
+                    pdf.set_text_color(51, 65, 85)
+                    for campo, valor in equipo.get('campos_dinamicos', {}).items():
+                        if valor:
+                            valor_str = "Sí" if isinstance(valor, bool) and valor else ("No" if isinstance(valor, bool) else str(valor))
+                            pdf.cell(0, 4, f"  • {campo}: {valor_str}", 0, 1)
+                
+                # Bitácoras de este equipo
+                bitacoras_equipo = [b for b in bitacoras if b.get('equipo_id') == equipo.get('_id')]
+                if bitacoras_equipo:
+                    pdf.ln(2)
+                    pdf.set_font("DejaVu", "B", 9)
+                    pdf.set_text_color(16, 185, 129)
+                    pdf.cell(0, 5, f"🔧 Mantenimientos ({len(bitacoras_equipo)}):", 0, 1)
+                    pdf.set_font("DejaVu", "", 8)
+                    pdf.set_text_color(51, 65, 85)
+                    for bit in bitacoras_equipo[:5]:  # Primeros 5
+                        fecha_str = "N/A"
+                        if bit.get('fecha'):
+                            try:
+                                dt = datetime.fromisoformat(str(bit['fecha']).replace('Z', '+00:00'))
+                                fecha_str = dt.strftime('%d/%m/%Y')
+                            except:
+                                pass
+                        pdf.cell(0, 4, f"  • {fecha_str} - {bit.get('tipo', '')} - {bit.get('estado', '')}", 0, 1)
+                    
+                    if len(bitacoras_equipo) > 5:
+                        pdf.set_text_color(100, 116, 139)
+                        pdf.cell(0, 4, f"  ... y {len(bitacoras_equipo) - 5} más", 0, 1)
+                
+                pdf.ln(3)
+                
+                # Separador entre equipos
+                if idx < len(equipos):
+                    pdf.set_draw_color(226, 232, 240)
+                    pdf.line(pdf.MARGIN, pdf.get_y(), pdf.PAGE_WIDTH - pdf.MARGIN, pdf.get_y())
+                    pdf.ln(3)
+                
+                # Nueva página cada 2 equipos para no saturar
+                if idx % 2 == 0 and idx < len(equipos):
+                    pdf.add_page()
+    
+    def _generar_empresa_clasico(self, pdf: ITSMReportPDF, empresa: Dict, equipos: List[Dict], bitacoras: List[Dict]):
+        """Template clásico para reporte de empresa"""
+        # Título
+        pdf.set_font("DejaVu", "B", 14)
+        pdf.set_text_color(0, 0, 0)
+        pdf.cell(0, 10, f"Empresa: {empresa.get('nombre', '')}", 0, 1, "C")
+        pdf.ln(3)
+        
+        # Información de empresa
+        pdf.set_font("DejaVu", "", 9)
+        pdf.multi_cell(0, 5, f"""Dirección: {empresa.get('direccion', 'N/A')}
+Teléfono: {empresa.get('telefono', 'N/A')}
+Email: {empresa.get('email', 'N/A')}""")
+        pdf.ln(5)
+        
+        # Resumen
+        pdf.set_font("DejaVu", "B", 11)
+        pdf.cell(0, 8, "RESUMEN", 0, 1)
+        pdf.set_font("DejaVu", "", 9)
+        pdf.cell(0, 5, f"Total de Equipos: {len(equipos)}", 0, 1)
+        pdf.cell(0, 5, f"Total de Mantenimientos: {len(bitacoras)}", 0, 1)
+        pdf.ln(5)
+        
+        # Tabla de equipos
+        if equipos:
+            pdf.set_font("DejaVu", "B", 10)
+            pdf.cell(0, 8, "EQUIPOS", 0, 1)
+            pdf.ln(2)
+            
+            # Encabezado
+            pdf.set_font("DejaVu", "B", 8)
+            pdf.set_fill_color(200, 200, 200)
+            pdf.cell(60, 6, "Nombre", 1, 0, "L", True)
+            pdf.cell(30, 6, "Tipo", 1, 0, "L", True)
+            pdf.cell(40, 6, "Marca/Modelo", 1, 0, "L", True)
+            pdf.cell(30, 6, "Estado", 1, 1, "L", True)
+            
+            # Datos
+            pdf.set_font("DejaVu", "", 7)
+            for equipo in equipos:
+                pdf.cell(60, 5, str(equipo.get('nombre', ''))[:30], 1, 0, "L")
+                pdf.cell(30, 5, str(equipo.get('tipo', ''))[:15], 1, 0, "L")
+                marca_modelo = f"{equipo.get('marca', '')} {equipo.get('modelo', '')}"[:25]
+                pdf.cell(40, 5, marca_modelo, 1, 0, "L")
+                pdf.cell(30, 5, str(equipo.get('estado', ''))[:15], 1, 1, "L")
+    
+    def _generar_empresa_minimalista(self, pdf: ITSMReportPDF, empresa: Dict, equipos: List[Dict], bitacoras: List[Dict]):
+        """Template minimalista para reporte de empresa"""
+        # Título simple
+        pdf.set_font("DejaVu", "", 16)
+        pdf.set_text_color(51, 65, 85)
+        pdf.cell(0, 12, empresa.get('nombre', ''), 0, 1)
+        pdf.set_font("DejaVu", "", 8)
+        pdf.set_text_color(148, 163, 184)
+        
+        info_empresa = []
+        if empresa.get('direccion'):
+            info_empresa.append(empresa.get('direccion'))
+        if empresa.get('telefono'):
+            info_empresa.append(empresa.get('telefono'))
+        
+        pdf.cell(0, 5, " • ".join(info_empresa), 0, 1)
+        pdf.ln(8)
+        
+        # Resumen compacto
+        pdf.set_font("DejaVu", "", 9)
+        pdf.set_text_color(71, 85, 105)
+        pdf.cell(0, 6, f"{len(equipos)} Equipos  •  {len(bitacoras)} Mantenimientos", 0, 1)
+        pdf.ln(5)
+        
+        # Lista de equipos
+        if equipos:
+            pdf.set_font("DejaVu", "", 11)
+            pdf.set_text_color(71, 85, 105)
+            pdf.cell(0, 8, "Equipos", 0, 1)
+            pdf.ln(2)
+            
+            for equipo in equipos:
+                pdf.set_font("DejaVu", "", 9)
+                pdf.set_text_color(51, 65, 85)
+                pdf.cell(0, 6, equipo.get('nombre', ''), 0, 1)
+                
+                pdf.set_font("DejaVu", "", 8)
+                pdf.set_text_color(148, 163, 184)
+                detalles = f"{equipo.get('tipo', '')} • {equipo.get('marca', '')} {equipo.get('modelo', '')} • {equipo.get('estado', '')}"
+                pdf.cell(0, 4, detalles, 0, 1)
+                pdf.ln(2)
+    
     def generate_bitacoras_report(self, bitacoras: List[Dict], empresa_nombre: str = None, 
                                    logo_path: str = None, sistema_nombre: str = "Sistema ITSM",
                                    campos_seleccionados: List[str] = None):
