@@ -732,9 +732,10 @@ async def exportar_bitacoras_pdf(
     periodo: str = "mes",
     fecha_inicio: Optional[str] = None,
     campos: Optional[str] = None,
+    template: str = "moderna",
     current_user: Dict = Depends(get_current_user)
 ):
-    """Exportar bitácoras a PDF con campos seleccionables"""
+    """Exportar bitácoras a PDF con campos seleccionables y plantillas"""
     from datetime import timedelta
     
     # Calcular rango de fechas
