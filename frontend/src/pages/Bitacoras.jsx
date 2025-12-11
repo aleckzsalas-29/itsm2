@@ -327,6 +327,7 @@ export default function Bitacoras() {
               <TableHead className="font-semibold text-slate-900">Descripción</TableHead>
               <TableHead className="font-semibold text-slate-900">Técnico</TableHead>
               <TableHead className="font-semibold text-slate-900">Estado</TableHead>
+              <TableHead className="font-semibold text-slate-900">F. Revisión</TableHead>
               <TableHead className="font-semibold text-slate-900 text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
