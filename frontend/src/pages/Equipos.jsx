@@ -191,6 +191,17 @@ export default function Equipos() {
 
   const handleEdit = (equipo) => {
     setEditingEquipo(equipo);
+    
+    // Formatear fechas si existen
+    const formatFecha = (fecha) => {
+      if (!fecha) return '';
+      try {
+        return new Date(fecha).toISOString().split('T')[0];
+      } catch {
+        return '';
+      }
+    };
+    
     setFormData({
       empresa_id: equipo.empresa_id,
       nombre: equipo.nombre,
@@ -204,11 +215,14 @@ export default function Equipos() {
       password_correo: '',
       ubicacion: equipo.ubicacion,
       estado: equipo.estado,
-      memoria_ram: equipo.memoria_ram || '',
-      disco_duro: equipo.disco_duro || '',
-      espacio_disponible: equipo.espacio_disponible || '',
-      procesador: equipo.procesador || '',
-      componentes: equipo.componentes || '',
+      fecha_compra: formatFecha(equipo.fecha_compra),
+      garantia_hasta: formatFecha(equipo.garantia_hasta),
+      proveedor: equipo.proveedor || '',
+      valor_compra: equipo.valor_compra || '',
+      direccion_mac: equipo.direccion_mac || '',
+      direccion_ip: equipo.direccion_ip || '',
+      hostname: equipo.hostname || '',
+      sistema_operativo: equipo.sistema_operativo || '',
       notas: equipo.notas || '',
       campos_personalizados: equipo.campos_personalizados || {},
       campos_dinamicos: equipo.campos_dinamicos || {},
