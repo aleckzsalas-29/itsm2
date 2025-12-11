@@ -926,14 +926,14 @@ Email: {empresa.get('email', 'N/A')}""")
         pdf.cell(0, 6, f"{len(equipos)} Equipos  •  {len(bitacoras)} Mantenimientos", 0, 1)
         pdf.ln(5)
         
-        # Lista de equipos
+        # Detalle de equipos con mantenimientos
         if equipos:
             pdf.set_font("DejaVu", "", 11)
             pdf.set_text_color(71, 85, 105)
             pdf.cell(0, 8, "Equipos", 0, 1)
             pdf.ln(2)
             
-            for equipo in equipos:
+            for idx, equipo in enumerate(equipos, 1):
                 pdf.set_font("DejaVu", "", 9)
                 pdf.set_text_color(51, 65, 85)
                 pdf.cell(0, 6, equipo.get('nombre', ''), 0, 1)
@@ -943,6 +943,21 @@ Email: {empresa.get('email', 'N/A')}""")
                 detalles = f"{equipo.get('tipo', '')} • {equipo.get('marca', '')} {equipo.get('modelo', '')} • {equipo.get('estado', '')}"
                 pdf.cell(0, 4, detalles, 0, 1)
                 pdf.ln(2)
+                
+                # Historial de mantenimientos minimalista
+                bitacoras_equipo = [b for b in bitacoras if b.get('equipo_id') == equipo.get('_id')]
+                if bitacoras_equipo:
+                    pdf.set_font("DejaVu", "", 8)
+                    pdf.set_text_color(100, 116, 139)
+                    pdf.cell(0, 5, f"  {len(bitacoras_equipo)} mantenimientos registrados", 0, 1)
+                    pdf.ln(1)
+                    
+                    self._add_mantenimientos_minimalista(pdf, bitacoras_equipo)
+                    pdf.ln(3)
+                
+                # Nueva página cada 3 equipos
+                if idx % 3 == 0 and idx < len(equipos):
+                    pdf.add_page()
     
     def generate_bitacoras_report(self, bitacoras: List[Dict], empresa_nombre: str = None, 
                                    logo_path: str = None, sistema_nombre: str = "Sistema ITSM",
