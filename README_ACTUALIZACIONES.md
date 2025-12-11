@@ -164,6 +164,7 @@ sudo systemctl start itsm-frontend
 | `INSTRUCCIONES_PDF_MEJORADOS.md` | Reportes PDF mejorados |
 | `INSTRUCCIONES_CAMPOS_DINAMICOS.md` | Campos dinámicos por tipo |
 | `INSTRUCCIONES_FECHA_REVISION.md` | Fecha de revisión en bitácoras |
+| `CAMBIOS_CAMPOS_EQUIPOS.md` | Optimización de campos en equipos |
 | `SOLUCION_ERROR_FUENTES.md` | Fix de error de fuentes en PDF |
 | `instalar_fuentes_dejavu.sh` | Script para instalar fuentes |
 
