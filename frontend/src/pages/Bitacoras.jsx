@@ -30,6 +30,7 @@ export default function Bitacoras() {
     descripcion: '',
     tecnico_id: user?._id || '',
     estado: 'Pendiente',
+    fecha_revision: '',
     observaciones: '',
     tiempo_estimado: '',
     limpieza_fisica: false,
