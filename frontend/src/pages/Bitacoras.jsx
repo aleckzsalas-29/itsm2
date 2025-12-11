@@ -136,10 +136,16 @@ export default function Bitacoras() {
     try {
       const submitData = { ...formData };
       submitData.empresa_id = selectedEmpresa;
-      if (submitData.tiempo_estimado) submitData.tiempo_estimado = parseInt(submitData.tiempo_estimado);
+      
+      // Convertir tiempo_estimado a entero o null
+      if (submitData.tiempo_estimado && submitData.tiempo_estimado !== '') {
+        submitData.tiempo_estimado = parseInt(submitData.tiempo_estimado);
+      } else {
+        submitData.tiempo_estimado = null;
+      }
       
       // Convertir fecha_revision a formato ISO si existe
-      if (submitData.fecha_revision) {
+      if (submitData.fecha_revision && submitData.fecha_revision !== '') {
         try {
           const fecha = new Date(submitData.fecha_revision + 'T00:00:00');
           submitData.fecha_revision = fecha.toISOString();
