@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend Testing Suite for Custom Fields Functionality
-Testing the ITSM system's custom fields implementation
+Backend Testing Suite for PDF Reports Functionality
+Testing the ITSM system's PDF report generation with templates
 """
 
 import requests
@@ -16,7 +16,7 @@ class ITSMBackendTester:
         self.base_url = "https://smart-itsm-2.preview.emergentagent.com/api"
         self.token = None
         self.test_results = []
-        self.empresa_id = None
+        self.empresa_id = "6933cc2e9798f84094ba851b"  # Test empresa ID provided
         self.equipo_id = None
         
     def log_result(self, test_name: str, success: bool, message: str, details: Dict = None):
