@@ -76,6 +76,29 @@ Este documento resume todas las mejoras implementadas y cómo aplicarlas en tu s
 
 ---
 
+### 5. 🔄 Campos Optimizados en Equipos
+**Descripción:** Eliminación de campos duplicados y agregación de campos únicos para mejor gestión de activos.
+
+**Campos Nuevos (8):**
+- 📅 **Fecha de Compra** - Control de inventario y depreciación
+- 📅 **Garantía Hasta** - Alertas de vencimiento
+- 🏢 **Proveedor** - Gestión comercial
+- 💰 **Valor de Compra** - Control de activos
+- 🔌 **Dirección MAC** - Identificación en red
+- 🌐 **Dirección IP** - Diagnóstico y acceso
+- 💻 **Hostname** - Identificación en red
+- 🖥️ **Sistema Operativo** - Control de licencias
+
+**Campos Eliminados:**
+- Procesador, RAM, Disco, Espacio Disponible (ahora en campos dinámicos)
+- Componentes Adicionales (redundante)
+
+**Ubicación:** Página de Equipos → Formulario de equipo
+
+**Documentación:** `CAMBIOS_CAMPOS_EQUIPOS.md`
+
+---
+
 ## 🚀 Actualización Rápida (Recomendado)
 
 ### Opción A: Script Automático
