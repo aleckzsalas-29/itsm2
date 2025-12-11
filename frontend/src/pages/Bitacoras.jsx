@@ -137,6 +137,19 @@ export default function Bitacoras() {
       const submitData = { ...formData };
       submitData.empresa_id = selectedEmpresa;
       if (submitData.tiempo_estimado) submitData.tiempo_estimado = parseInt(submitData.tiempo_estimado);
+      
+      // Convertir fecha_revision a formato ISO si existe
+      if (submitData.fecha_revision) {
+        try {
+          const fecha = new Date(submitData.fecha_revision + 'T00:00:00');
+          submitData.fecha_revision = fecha.toISOString();
+        } catch (error) {
+          console.error('Error formateando fecha_revision:', error);
+          submitData.fecha_revision = null;
+        }
+      } else {
+        submitData.fecha_revision = null;
+      }
 
       if (editingBitacora) {
         await api.put(`/bitacoras/${editingBitacora._id}`, submitData);
